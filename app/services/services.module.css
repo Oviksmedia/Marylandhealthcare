@@ -1,0 +1,258 @@
+.page {
+  background: var(--bg-canvas);
+  min-height: 100vh;
+}
+
+.header {
+  background: var(--bg-canvas);
+  padding: 10rem var(--container-pad) 0;
+}
+
+.headerInner,
+.listInner {
+  margin: 0 auto;
+  max-width: var(--container-max);
+  width: 100%;
+}
+
+.headerInner {
+  text-align: center;
+}
+
+.headerInner h1 {
+  color: var(--primary);
+  font-size: var(--type-display);
+  margin: 1rem auto 1.5rem;
+  max-width: 13ch;
+}
+
+.headerInner > p:last-child {
+  color: var(--on-surface-variant);
+  font-size: var(--type-body-lg);
+  line-height: 1.65;
+  margin: 0 auto;
+  max-width: 40ch;
+}
+
+.servicesList {
+  background: var(--bg-canvas);
+  padding: var(--space-xl) var(--container-pad) var(--space-xxl);
+}
+
+.listInner {
+  display: grid;
+  gap: clamp(5rem, 9vw, 7rem);
+}
+
+.serviceArticle {
+  align-items: center;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.serviceText {
+  min-width: 0;
+  order: 2;
+}
+
+.odd .serviceText {
+  grid-column: 1 / span 6;
+}
+
+.even .serviceText {
+  grid-column: 8 / span 5;
+}
+
+.serviceImageWrap {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  min-height: 22rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.odd .serviceImageWrap {
+  grid-column: 8 / span 5;
+}
+
+.even .serviceImageWrap {
+  grid-column: 1 / span 6;
+}
+
+.portraitImage {
+  aspect-ratio: 4 / 5;
+}
+
+.squareImage {
+  aspect-ratio: 1 / 1;
+}
+
+.serviceImage {
+  object-fit: cover;
+  transition: transform 900ms var(--ease-premium), filter 900ms var(--ease-premium);
+}
+
+.serviceArticle:hover .serviceImage {
+  filter: saturate(1.04);
+  transform: scale(1.035);
+}
+
+.serviceEyebrow {
+  color: var(--tertiary);
+  display: inline-block;
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.serviceText h2 {
+  color: var(--primary);
+  font-size: var(--type-h1);
+  margin-bottom: 1.4rem;
+  max-width: 11ch;
+}
+
+.description {
+  color: var(--on-surface-variant);
+  font-size: var(--type-body);
+  line-height: 1.75;
+  max-width: 44ch;
+}
+
+.idealBox {
+  background: var(--bg-surface-low);
+  border: 1px solid oklch(0.78 0.02 193 / 0.3);
+  border-radius: var(--radius-md);
+  margin: 1.75rem 0 2rem;
+  max-width: 44rem;
+  padding: var(--space-md);
+}
+
+.idealBox p {
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.idealBox span {
+  color: var(--on-surface-variant);
+  display: block;
+  line-height: 1.65;
+}
+
+.cta {
+  align-items: center;
+  border: 1.5px solid var(--tertiary);
+  border-radius: var(--radius-pill);
+  color: var(--tertiary);
+  display: inline-flex;
+  font-size: var(--type-small);
+  font-weight: 800;
+  gap: 0.65rem;
+  letter-spacing: 0.08em;
+  min-height: 3.25rem;
+  padding: 0.9rem 1.65rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background var(--duration-std) var(--ease-premium),
+    border-color var(--duration-std) var(--ease-premium),
+    color var(--duration-std) var(--ease-premium),
+    transform var(--duration-std) var(--ease-premium);
+}
+
+.cta:hover {
+  background: var(--tertiary-light);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .serviceImage {
+    transition: none;
+  }
+
+  .serviceArticle:hover .serviceImage {
+    filter: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    padding-top: 8rem;
+  }
+
+  .servicesList {
+    padding-bottom: var(--space-xl);
+    padding-top: var(--space-lg);
+  }
+
+  .serviceArticle {
+    grid-template-columns: 1fr;
+  }
+
+  .odd .serviceText,
+  .even .serviceText,
+  .odd .serviceImageWrap,
+  .even .serviceImageWrap {
+    grid-column: 1 / -1;
+  }
+
+  .serviceImageWrap {
+    min-height: 0;
+    order: 1;
+  }
+
+  .serviceText {
+    order: 2;
+  }
+
+  .portraitImage,
+  .squareImage {
+    aspect-ratio: 16 / 11;
+  }
+
+  .serviceText h2 {
+    max-width: 14ch;
+  }
+}
+
+@media (max-width: 560px) {
+  .header {
+    padding-top: 7rem;
+  }
+
+  .headerInner {
+    text-align: left;
+  }
+
+  .headerInner h1 {
+    margin-left: 0;
+    max-width: 11ch;
+  }
+
+  .headerInner > p:last-child {
+    font-size: 1.05rem;
+    margin-left: 0;
+  }
+
+  .listInner {
+    gap: 4.5rem;
+  }
+
+  .serviceImageWrap {
+    border-radius: var(--radius-sm);
+  }
+
+  .idealBox {
+    padding: 1.25rem;
+  }
+
+  .cta {
+    justify-content: center;
+    width: 100%;
+  }
+}
