@@ -8,6 +8,13 @@ import styles from "./contact.module.css";
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
+const socialLinks = [
+  { label: "Facebook", href: "https://www.facebook.com/marylandhealthcareph/" },
+  { label: "Instagram", href: "https://www.instagram.com/marylandhealthcareph/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/mhcportharcourt/" },
+  { label: "X", href: "https://x.com/marylandhc_ph" },
+];
+
 export default function ContactClient() {
   const prefersReducedMotion = useReducedMotion();
   const reveal = prefersReducedMotion ? false : { opacity: 0, y: 26 };
@@ -79,6 +86,17 @@ export default function ContactClient() {
                 <Phone aria-hidden size={19} />
                 +234 913 430 1436
               </a>
+            </div>
+          </div>
+
+          <div className={styles.infoBlock}>
+            <h2>Follow Us</h2>
+            <div className={styles.socialLinks}>
+              {socialLinks.map((link) => (
+                <a href={link.href} key={link.label} rel="noreferrer" target="_blank">
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
 

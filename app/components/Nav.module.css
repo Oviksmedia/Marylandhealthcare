@@ -6,7 +6,19 @@
   position: fixed;
   right: 0;
   top: 0;
+  transition:
+    backdrop-filter var(--duration-std) var(--ease-premium),
+    background var(--duration-std) var(--ease-premium),
+    border-color var(--duration-std) var(--ease-premium),
+    box-shadow var(--duration-std) var(--ease-premium);
   z-index: 50;
+}
+
+.scrolled {
+  background: oklch(0.98 0.01 85 / 0.95);
+  backdrop-filter: blur(18px);
+  border-bottom-color: oklch(0.40 0.13 193 / 0.18);
+  box-shadow: 0 16px 42px -34px oklch(0.12 0.01 220 / 0.45);
 }
 
 .nav {
@@ -15,6 +27,11 @@
   gap: 1rem;
   grid-template-columns: auto 1fr auto;
   min-height: 6.125rem;
+  transition: min-height var(--duration-std) var(--ease-premium);
+}
+
+.scrolled .nav {
+  min-height: 5.25rem;
 }
 
 .brand {
@@ -34,7 +51,12 @@
   height: 40px;
   object-fit: contain;
   object-position: left center;
+  transition: height var(--duration-std) var(--ease-premium);
   width: auto;
+}
+
+.scrolled .logo {
+  height: 36px;
 }
 
 .desktopLinks {
@@ -228,6 +250,14 @@
 
   .menuButton {
     display: inline-flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .nav,
+  .logo {
+    transition: none;
   }
 }
 

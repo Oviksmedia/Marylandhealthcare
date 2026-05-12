@@ -94,7 +94,7 @@
 
 .logoMark {
   display: block;
-  filter: saturate(0.92) contrast(1.02);
+  filter: grayscale(0.35) saturate(0.86) contrast(1.02);
   height: auto;
   max-height: clamp(2.9rem, 4.6vw, 4.4rem);
   max-width: 100%;
@@ -113,7 +113,7 @@
 }
 
 .logoItem:hover .logoMark {
-  filter: saturate(1.08) contrast(1.04);
+  filter: grayscale(0) saturate(1.08) contrast(1.04);
 }
 
 .fadeLeft,
