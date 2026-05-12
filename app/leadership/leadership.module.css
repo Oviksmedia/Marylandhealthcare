@@ -1,0 +1,326 @@
+.page {
+  background: var(--bg-canvas);
+  min-height: 100vh;
+  padding-bottom: var(--space-xl);
+}
+
+.header,
+.cmdSection,
+.teamSection,
+.closing {
+  margin: 0 auto;
+  max-width: var(--container-max);
+  padding-left: var(--container-pad);
+  padding-right: var(--container-pad);
+}
+
+.header {
+  padding-top: 10rem;
+}
+
+.headerInner {
+  max-width: 58rem;
+}
+
+.header h1 {
+  color: var(--primary);
+  font-size: var(--type-display);
+  margin: 1.5rem 0;
+  max-width: 13ch;
+}
+
+.header span,
+.teamHeader span,
+.closing p,
+.cmdCopy > span {
+  color: var(--on-surface-variant);
+  display: block;
+  font-size: var(--type-body-lg);
+  line-height: 1.65;
+  max-width: 48rem;
+}
+
+.cmdSection {
+  padding-top: var(--space-xl);
+}
+
+.cmdGrid {
+  align-items: center;
+  display: grid;
+  gap: clamp(3rem, 7vw, 5rem);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.cmdCopy {
+  grid-column: 1 / span 7;
+}
+
+.cmdCopy > p {
+  color: var(--tertiary);
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.cmdCopy h2 {
+  color: var(--primary);
+  font-size: var(--type-h1);
+  margin-bottom: 1.4rem;
+}
+
+.cmdCopy blockquote {
+  border-left: 3px solid oklch(0.40 0.13 193 / 0.34);
+  color: var(--primary);
+  font-family: var(--font-serif);
+  font-size: clamp(1.55rem, 3vw, 2.25rem);
+  font-style: italic;
+  line-height: 1.35;
+  margin: clamp(2rem, 5vw, 3rem) 0;
+  padding-left: clamp(1.25rem, 3vw, 2rem);
+}
+
+.establishedBadge {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.establishedBadge strong {
+  background: var(--bg-surface);
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  font-size: var(--type-eyebrow);
+  letter-spacing: 0.12em;
+  padding: 0.85rem 1.25rem;
+  text-transform: uppercase;
+}
+
+.establishedBadge span {
+  color: var(--text-muted);
+}
+
+.cmdImageColumn {
+  grid-column: 8 / span 5;
+  position: relative;
+}
+
+.cmdImageWrap {
+  aspect-ratio: 3 / 4;
+  background: var(--bg-surface);
+  border-radius: 9999px 9999px var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+  position: relative;
+}
+
+.cmdImage {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.trustBadge {
+  background: var(--bg-canvas);
+  border: 1px solid oklch(0.40 0.13 193 / 0.14);
+  border-radius: var(--radius-lg);
+  bottom: -1.5rem;
+  box-shadow: var(--shadow-float);
+  left: -1.5rem;
+  padding: 1.25rem 1.5rem;
+  position: absolute;
+  text-align: center;
+}
+
+.trustBadge strong {
+  color: var(--primary);
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  line-height: 0.9;
+}
+
+.trustBadge span {
+  color: var(--text-muted);
+  display: block;
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+}
+
+.teamSection {
+  padding-top: var(--space-xl);
+}
+
+.teamSection::before {
+  background: var(--bg-surface-low);
+  border-radius: var(--radius-xl);
+  content: "";
+  display: block;
+  height: 0;
+}
+
+.teamHeader {
+  background: var(--bg-surface-low);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem) 0;
+}
+
+.teamHeader h2 {
+  color: var(--primary);
+  font-size: var(--type-h1);
+  margin: 0.8rem 0 1rem;
+}
+
+.teamGrid {
+  background: var(--bg-surface-low);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: clamp(2rem, 5vw, 3rem);
+}
+
+.doctorCard {
+  min-width: 0;
+}
+
+.offsetOne {
+  margin-top: 0;
+}
+
+.offsetTwo {
+  margin-top: 3rem;
+}
+
+.offsetThree {
+  margin-top: 6rem;
+}
+
+.doctorImageWrap {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.portrait {
+  aspect-ratio: 4 / 5;
+}
+
+.square {
+  aspect-ratio: 1 / 1;
+}
+
+.doctorImage {
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 700ms var(--ease-premium);
+}
+
+.doctorCard:hover .doctorImage {
+  transform: scale(1.05);
+}
+
+.doctorCard h3 {
+  color: var(--primary);
+  font-family: var(--font-serif);
+  font-size: var(--type-h2);
+  line-height: 1.1;
+  margin: 0 0 0.5rem;
+}
+
+.doctorCard p {
+  color: var(--text-muted);
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.closing {
+  padding-top: var(--space-xl);
+  text-align: center;
+}
+
+.closing h2 {
+  color: var(--primary);
+  font-size: var(--type-h1);
+  margin-bottom: 1.25rem;
+}
+
+.closing p {
+  margin: 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doctorImage {
+    transition: none;
+  }
+
+  .doctorCard:hover .doctorImage {
+    transform: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .header {
+    padding-top: 8rem;
+  }
+
+  .cmdCopy,
+  .cmdImageColumn {
+    grid-column: 1 / -1;
+  }
+
+  .cmdImageColumn {
+    order: -1;
+  }
+
+  .teamGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .offsetTwo,
+  .offsetThree {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding-top: 7rem;
+  }
+
+  .header h1 {
+    max-width: 11ch;
+  }
+
+  .teamHeader,
+  .teamGrid {
+    border-radius: 0;
+    margin-left: calc(var(--container-pad) * -1);
+    margin-right: calc(var(--container-pad) * -1);
+  }
+
+  .teamGrid {
+    grid-template-columns: 1fr;
+    padding-left: var(--container-pad);
+    padding-right: var(--container-pad);
+  }
+
+  .teamHeader {
+    padding-left: var(--container-pad);
+    padding-right: var(--container-pad);
+  }
+
+  .trustBadge {
+    bottom: 1rem;
+    left: 1rem;
+  }
+}

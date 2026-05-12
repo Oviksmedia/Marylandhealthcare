@@ -1,0 +1,209 @@
+.section {
+  background: var(--bg-canvas);
+  overflow: hidden;
+  padding: var(--space-xl) 0;
+  position: relative;
+}
+
+.section::after {
+  background: var(--bg-surface);
+  border-bottom-left-radius: 10rem;
+  content: "";
+  height: min(60vh, 42rem);
+  opacity: 0.72;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: min(40vw, 38rem);
+  z-index: 0;
+}
+
+.grid {
+  align-items: center;
+  display: grid;
+  gap: clamp(3rem, 8vw, 6rem);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  position: relative;
+  z-index: 1;
+}
+
+.copy {
+  grid-column: 1 / span 5;
+}
+
+.eyebrow {
+  color: var(--text-eyebrow);
+  font-size: var(--type-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.copy h2 {
+  font-size: var(--type-h1);
+  max-width: 10ch;
+}
+
+.quote {
+  border-left: 3px solid var(--primary);
+  margin: 2.25rem 0 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.quote span {
+  color: oklch(0.40 0.13 193 / 0.08);
+  font-family: var(--font-serif);
+  font-size: 9rem;
+  left: -1.5rem;
+  line-height: 1;
+  position: absolute;
+  top: -3.6rem;
+}
+
+.quote p {
+  color: var(--text-main);
+  font-size: var(--type-body-lg);
+  font-style: italic;
+  line-height: 1.75;
+  max-width: 42rem;
+  position: relative;
+  z-index: 1;
+}
+
+.signature {
+  align-items: center;
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+
+.signatureMark {
+  background: var(--primary);
+  border-radius: var(--radius-pill);
+  height: 4rem;
+  width: 0.35rem;
+}
+
+.signature h3 {
+  color: var(--primary);
+  font-family: var(--font-serif);
+  font-size: var(--type-h2);
+  font-weight: 600;
+  letter-spacing: var(--tracking-normal);
+  line-height: 1.1;
+  margin-bottom: 0.35rem;
+}
+
+.signature p {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.signature span {
+  align-items: center;
+  color: var(--text-muted);
+  display: inline-flex;
+  font-size: var(--type-small);
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+}
+
+.signature svg {
+  color: var(--primary);
+}
+
+.portraitColumn {
+  grid-column: 7 / -1;
+  justify-self: center;
+  max-width: 32rem;
+  position: relative;
+  width: 100%;
+}
+
+.portraitFrame {
+  aspect-ratio: 3 / 4;
+  background: var(--bg-surface);
+  border: 8px solid var(--bg-canvas);
+  border-radius: 280px 280px 16px 16px;
+  box-shadow: 0 22px 54px -34px oklch(0.40 0.13 193 / 0.56);
+  overflow: hidden;
+  position: relative;
+}
+
+.portrait {
+  object-fit: cover;
+  object-position: center;
+}
+
+.badge {
+  align-items: center;
+  background: oklch(0.45 0.12 30);
+  border: 4px solid var(--bg-canvas);
+  border-radius: 50%;
+  box-shadow: 0 12px 34px -18px oklch(0.45 0.12 30 / 0.7);
+  color: var(--text-inverse);
+  display: flex;
+  flex-direction: column;
+  height: clamp(6.5rem, 10vw, 8rem);
+  justify-content: center;
+  position: absolute;
+  right: -1.5rem;
+  top: -1.5rem;
+  transform: rotate(10deg);
+  width: clamp(6.5rem, 10vw, 8rem);
+  z-index: 2;
+}
+
+.badge span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.badge strong {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .copy,
+  .portraitColumn {
+    grid-column: 1;
+  }
+
+  .portraitColumn {
+    order: -1;
+    width: min(86vw, 30rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .section {
+    padding: 4.5rem 0;
+  }
+
+  .copy h2 {
+    max-width: 11ch;
+  }
+
+  .quote p {
+    font-size: 1.05rem;
+  }
+
+  .signature {
+    align-items: flex-start;
+  }
+
+  .badge {
+    right: -0.75rem;
+    top: -0.75rem;
+  }
+}

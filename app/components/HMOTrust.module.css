@@ -1,0 +1,237 @@
+.section {
+  background: var(--bg-surface);
+  overflow: hidden;
+  padding: var(--section-pad) 0;
+}
+
+.grid {
+  align-items: center;
+  display: grid;
+  gap: clamp(3rem, 7vw, 6rem);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.copy {
+  grid-column: span 5;
+}
+
+.copy h2 {
+  color: var(--text-main);
+  max-width: 13ch;
+}
+
+.copy > p {
+  color: var(--text-muted);
+  font-size: var(--type-body-lg);
+  line-height: var(--leading-body);
+  margin-top: 1.5rem;
+  max-width: 33rem;
+}
+
+.eyebrow {
+  align-items: center;
+  color: var(--text-eyebrow);
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow span {
+  background: var(--primary);
+  display: block;
+  height: 1px;
+  width: 3rem;
+}
+
+.eyebrow p {
+  font-size: var(--type-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.marqueeContainer {
+  grid-column: span 7;
+  min-height: 18rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.motionRows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.25rem, 4vw, 3.5rem);
+  justify-content: center;
+  min-height: 18rem;
+}
+
+.marqueeRow {
+  display: flex;
+  width: 200%;
+}
+
+.logoSet {
+  align-items: center;
+  display: flex;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  min-width: 50%;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+}
+
+.logoItem {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: clamp(4rem, 6vw, 5.75rem);
+  justify-content: center;
+  opacity: 0.92;
+  padding: 0;
+  transition:
+    opacity var(--duration-std) var(--ease-premium),
+    transform var(--duration-std) var(--ease-premium);
+  width: clamp(8.5rem, 11vw, 12rem);
+}
+
+.logoMark {
+  display: block;
+  filter: saturate(0.92) contrast(1.02);
+  height: auto;
+  max-height: clamp(2.9rem, 4.6vw, 4.4rem);
+  max-width: 100%;
+  mix-blend-mode: multiply;
+  object-fit: contain;
+  transition:
+    filter var(--duration-std) var(--ease-premium),
+    opacity var(--duration-std) var(--ease-premium),
+    transform var(--duration-std) var(--ease-premium);
+  width: auto;
+}
+
+.logoItem:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.logoItem:hover .logoMark {
+  filter: saturate(1.08) contrast(1.04);
+}
+
+.fadeLeft,
+.fadeRight {
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 6rem;
+  z-index: 2;
+}
+
+.fadeLeft {
+  background: linear-gradient(to right, var(--bg-surface), transparent);
+  left: 0;
+}
+
+.fadeRight {
+  background: linear-gradient(to left, var(--bg-surface), transparent);
+  right: 0;
+}
+
+.staticGrid {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .forward {
+    animation: marquee 30s linear infinite;
+  }
+
+  .reverse {
+    animation: marqueeReverse 35s linear infinite;
+    margin-left: -25%;
+  }
+
+  .marqueeContainer:hover .forward,
+  .marqueeContainer:hover .reverse {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marqueeReverse {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motionRows,
+  .fadeLeft,
+  .fadeRight {
+    display: none;
+  }
+
+  .staticGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-start;
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .copy,
+  .marqueeContainer {
+    grid-column: 1;
+  }
+
+  .copy h2 {
+    max-width: 16ch;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: clamp(3.5rem, 16vw, 5rem) 0;
+  }
+
+  .copy h2 {
+    max-width: 100%;
+  }
+
+  .copy > p {
+    font-size: 1.05rem;
+  }
+
+  .marqueeContainer,
+  .motionRows {
+    min-height: 14rem;
+  }
+
+  .logoSet {
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  .fadeLeft,
+  .fadeRight {
+    width: 3rem;
+  }
+}

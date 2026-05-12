@@ -1,0 +1,662 @@
+.page {
+  background: var(--bg-canvas);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.topBar {
+  align-items: center;
+  background: oklch(0.98 0.01 85 / 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.32);
+  display: flex;
+  justify-content: space-between;
+  min-height: 5rem;
+  padding: 1rem var(--container-pad);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.topBar button,
+.topBar a {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--primary);
+  display: inline-flex;
+  font-weight: 700;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  text-decoration: none;
+}
+
+.topBar button:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.brand {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+}
+
+.shell {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: clamp(3rem, 7vw, 5rem) var(--container-pad) 8rem;
+}
+
+.stepIntro {
+  margin: 0 auto 3rem;
+  max-width: 48rem;
+  text-align: center;
+}
+
+.stepIntro p {
+  color: var(--primary);
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.stepIntro h1 {
+  color: var(--primary);
+  font-size: var(--type-h1);
+}
+
+.progressTrack {
+  background: var(--bg-surface);
+  border-radius: var(--radius-pill);
+  height: 0.35rem;
+  margin: 1.6rem auto 0;
+  max-width: 26rem;
+  overflow: hidden;
+}
+
+.progressTrack span {
+  background: var(--primary);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transition: width var(--duration-std) var(--ease-premium);
+}
+
+.stepPanel {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.modalityGrid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.modalityCard,
+.serviceCard {
+  background: var(--bg-surface);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-lg);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background var(--duration-std) var(--ease-premium),
+    border-color var(--duration-std) var(--ease-premium),
+    box-shadow var(--duration-std) var(--ease-premium),
+    color var(--duration-std) var(--ease-premium),
+    transform var(--duration-std) var(--ease-premium);
+}
+
+.modalityCard {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  min-height: 17rem;
+  padding: var(--space-md);
+}
+
+.modalityCard:hover,
+.serviceCard:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+.virtualCard {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.selectedCard,
+.selectedService {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+
+.selectedVirtual {
+  border-color: var(--primary-bright);
+  box-shadow: var(--shadow-hover);
+}
+
+.iconCircle {
+  align-items: center;
+  background: var(--primary-light);
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  display: inline-flex;
+  height: 4rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  width: 4rem;
+}
+
+.virtualCard .iconCircle {
+  background: oklch(0.98 0.01 85 / 0.12);
+  color: var(--text-inverse);
+}
+
+.modalityCard strong {
+  font-family: var(--font-serif);
+  font-size: var(--type-h2);
+  line-height: 1.15;
+}
+
+.modalityCard > span:last-child {
+  color: inherit;
+  line-height: 1.7;
+  margin-top: 1rem;
+  opacity: 0.78;
+}
+
+.serviceHeader {
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.32);
+  padding-bottom: 1rem;
+}
+
+.serviceHeader h2 {
+  color: var(--primary);
+  font-size: var(--type-h2);
+}
+
+.serviceGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.serviceCard {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  padding: 1.4rem;
+}
+
+.serviceCard svg {
+  color: var(--primary);
+  flex: 0 0 auto;
+}
+
+.serviceCard span {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.serviceCard strong {
+  color: var(--primary);
+  font-size: var(--type-body);
+}
+
+.serviceCard em {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+  font-style: normal;
+}
+
+.dateTimeGrid,
+.detailsGrid {
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.calendar,
+.paymentCard,
+.visitSummary {
+  background: var(--bg-surface);
+  border: 1px solid oklch(0.78 0.02 193 / 0.32);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-md);
+}
+
+.calendarHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.calendarHeader button {
+  align-items: center;
+  background: var(--primary-light);
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  display: inline-flex;
+  height: 2.75rem;
+  justify-content: center;
+  width: 2.75rem;
+}
+
+.calendarHeader h2,
+.paymentCard h2,
+.visitSummary h2,
+.videoRoom h2 {
+  color: var(--primary);
+  font-size: var(--type-h2);
+}
+
+.weekdays,
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+
+.weekdays {
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.32);
+  color: var(--text-muted);
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.daysGrid {
+  gap: 0.45rem 0;
+  padding-top: 1rem;
+}
+
+.dayButton {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--text-main);
+  height: 2.55rem;
+  justify-self: center;
+  width: 2.55rem;
+}
+
+.dayButton:hover:not(:disabled) {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.dayButton:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.selectedDay {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.timeColumn {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.timeHeader {
+  align-items: center;
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.32);
+  color: var(--primary);
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+}
+
+.timeHeader h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+.timeGrid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.timePill {
+  align-items: center;
+  background: transparent;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  display: inline-flex;
+  gap: 0.45rem;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+}
+
+.timePill:hover:not(:disabled) {
+  background: var(--primary-light);
+}
+
+.selectedTime {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.bookedTime {
+  background: var(--bg-surface);
+  border-color: transparent;
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.detailsForm {
+  min-width: 0;
+}
+
+.patientToggle {
+  background: var(--bg-surface);
+  border-radius: var(--radius-pill);
+  display: flex;
+  margin-bottom: var(--space-md);
+  max-width: 28rem;
+  padding: 0.35rem;
+}
+
+.patientToggle button {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  flex: 1;
+  font-weight: 700;
+  min-height: 3rem;
+}
+
+.patientToggle .activePatientType {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.formGrid {
+  display: grid;
+  gap: 1.5rem 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.formGrid label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.formGrid label span {
+  color: var(--text-muted);
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.formGrid input,
+.formGrid textarea {
+  background: transparent;
+  border: 0;
+  border-bottom: 1.5px solid oklch(0.78 0.02 193 / 0.9);
+  border-radius: 0;
+  color: var(--primary);
+  outline: none;
+  padding: 0.65rem 0 0.95rem;
+  resize: vertical;
+}
+
+.formGrid input:focus,
+.formGrid textarea:focus {
+  border-color: var(--primary);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.summaryColumn {
+  display: grid;
+  gap: 1rem;
+}
+
+.paymentCard {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.paymentCard svg {
+  color: var(--primary);
+}
+
+.paymentCard div {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.paymentCard hr {
+  border: 0;
+  border-top: 1px solid oklch(0.78 0.02 193 / 0.4);
+  width: 100%;
+}
+
+.paymentCard .totalRow {
+  color: var(--primary);
+  font-size: 1.15rem;
+}
+
+.visitSummary p {
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-top: 0.75rem;
+}
+
+.emergencyDisclaimer {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+  line-height: 1.65;
+  text-align: center;
+}
+
+.emergencyDisclaimer strong {
+  color: var(--accent-emergency);
+}
+
+.successPanel {
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 48rem;
+  text-align: center;
+}
+
+.successIcon {
+  color: var(--primary);
+}
+
+.successPanel > p {
+  color: var(--on-surface-variant);
+  font-size: var(--type-body-lg);
+  line-height: 1.65;
+  max-width: 38rem;
+}
+
+.confirmationGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+}
+
+.confirmationGrid span {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.2rem;
+}
+
+.confirmationGrid strong {
+  color: var(--primary);
+}
+
+.videoRoom {
+  background: var(--primary);
+  border-radius: var(--radius-xl);
+  color: var(--text-inverse);
+  display: grid;
+  justify-items: center;
+  margin-top: 1rem;
+  padding: var(--space-md);
+  width: min(100%, 34rem);
+}
+
+.videoRoom h2 {
+  color: var(--text-inverse);
+  margin-top: 1rem;
+}
+
+.videoRoom p {
+  color: oklch(0.98 0.01 85 / 0.82);
+  margin: 0.6rem 0 1.5rem;
+}
+
+.videoRoom a,
+.homeLink {
+  align-items: center;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.6rem;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0.9rem 1.5rem;
+  text-decoration: none;
+}
+
+.videoRoom a {
+  background: var(--bg-canvas);
+  color: var(--primary);
+}
+
+.homeLink {
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+}
+
+.actionBar {
+  align-items: center;
+  background: oklch(0.96 0.01 85 / 0.9);
+  backdrop-filter: blur(14px);
+  border: 1px solid oklch(0.78 0.02 193 / 0.34);
+  border-radius: var(--radius-lg);
+  bottom: 1rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: var(--space-lg);
+  padding: 1rem;
+  position: sticky;
+  z-index: 15;
+}
+
+.actionBar div {
+  display: grid;
+  min-width: 0;
+}
+
+.actionBar strong {
+  color: var(--primary);
+}
+
+.actionBar span {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.actionBar button {
+  align-items: center;
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--text-inverse);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 800;
+  gap: 0.6rem;
+  justify-content: center;
+  min-height: 3.35rem;
+  padding: 0.9rem 1.5rem;
+}
+
+.actionBar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressTrack span,
+  .modalityCard,
+  .serviceCard {
+    transition: none;
+  }
+
+  .modalityCard:hover,
+  .serviceCard:hover {
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .modalityGrid,
+  .dateTimeGrid,
+  .detailsGrid,
+  .confirmationGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .topBar span {
+    display: none;
+  }
+
+  .shell {
+    padding-bottom: 7rem;
+  }
+
+  .serviceGrid,
+  .formGrid,
+  .timeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actionBar button {
+    width: 100%;
+  }
+}

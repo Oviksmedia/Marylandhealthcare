@@ -1,0 +1,116 @@
+.section {
+  background: var(--bg-dark);
+  color: var(--text-inverse);
+  overflow: hidden;
+  padding: var(--space-xl) 0;
+  position: relative;
+}
+
+.section::after {
+  background-image: radial-gradient(circle at 2px 2px, oklch(0.98 0.01 85 / 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+  content: "";
+  inset: 0;
+  opacity: 0.55;
+  pointer-events: none;
+  position: absolute;
+}
+
+.inner {
+  align-items: center;
+  display: flex;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.copy {
+  max-width: 44rem;
+}
+
+.copy h2 {
+  color: var(--text-inverse);
+  font-size: var(--type-h1);
+  max-width: 12ch;
+}
+
+.copy p {
+  color: oklch(0.98 0.01 85 / 0.8);
+  font-size: var(--type-body-lg);
+  line-height: 1.65;
+  margin-top: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.primaryCta,
+.ghostCta {
+  align-items: center;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 800;
+  gap: 0.7rem;
+  justify-content: center;
+  letter-spacing: 0.08em;
+  min-height: 3.5rem;
+  padding: 1rem 1.7rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background var(--duration-std) var(--ease-premium),
+    border-color var(--duration-std) var(--ease-premium),
+    color var(--duration-std) var(--ease-premium),
+    transform var(--duration-std) var(--ease-premium);
+}
+
+.primaryCta {
+  background: var(--text-inverse);
+  color: var(--primary);
+}
+
+.primaryCta:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.ghostCta {
+  background: transparent;
+  border: 1.5px solid oklch(0.98 0.01 85 / 0.72);
+  color: var(--text-inverse);
+}
+
+.ghostCta:hover {
+  background: oklch(0.98 0.01 85 / 0.12);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 920px) {
+  .inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .section {
+    padding: 4.5rem 0;
+  }
+
+  .actions,
+  .primaryCta,
+  .ghostCta {
+    width: 100%;
+  }
+}
