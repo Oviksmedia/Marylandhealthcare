@@ -19,6 +19,7 @@ export default function Nav() {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const isActiveLink = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -30,10 +31,23 @@ export default function Nav() {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const updateScrolledState = () => {
+      setIsScrolled(window.scrollY > 16);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolledState);
+    };
+  }, []);
+
   return (
     <motion.header
       animate={{ opacity: 1, y: 0 }}
-      className={styles.header}
+      className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}
       initial={prefersReducedMotion ? false : { opacity: 0, y: -16 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >

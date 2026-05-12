@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import styles from "./leadership.module.css";
 
@@ -52,11 +52,15 @@ const doctors = [
 ];
 
 export default function LeadershipClient() {
+  const prefersReducedMotion = useReducedMotion();
+  const reveal = prefersReducedMotion ? false : { opacity: 0, y: 28 };
+  const imageReveal = prefersReducedMotion ? false : { opacity: 0, x: 34 };
+
   return (
     <main className={styles.page}>
       <motion.section
         className={styles.header}
-        initial={false}
+        initial={reveal}
         transition={{ duration: 0.75, ease }}
         viewport={{ amount: 0.35, once: true }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -76,7 +80,7 @@ export default function LeadershipClient() {
         <div className={styles.cmdGrid}>
           <motion.div
             className={styles.cmdCopy}
-            initial={false}
+            initial={reveal}
             transition={{ duration: 0.75, ease }}
             viewport={{ amount: 0.25, once: true }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -101,7 +105,7 @@ export default function LeadershipClient() {
 
           <motion.div
             className={styles.cmdImageColumn}
-            initial={false}
+            initial={imageReveal}
             transition={{ duration: 0.85, ease, delay: 0.08 }}
             viewport={{ amount: 0.25, once: true }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -138,7 +142,7 @@ export default function LeadershipClient() {
           {doctors.map((doctor, index) => (
             <motion.article
               className={`${styles.doctorCard} ${styles[doctor.offset as keyof typeof styles]}`}
-              initial={false}
+              initial={reveal}
               key={doctor.name}
               transition={{ duration: 0.7, ease, delay: index * 0.08 }}
               viewport={{ amount: 0.2, once: true }}
