@@ -17,6 +17,7 @@ export interface Service {
   slug: string;
   image: string;
   imageAlt: string;
+  aspectRatio?: "portrait" | "square" | "landscape";
   detail: ServiceDetail;
   relatedSlugs: string[];
 }
@@ -256,6 +257,7 @@ export const servicesData: Service[] = [
     ctaLabel: "View Lab Services",
     slug: "diagnostic-laboratory",
     image: "/services/diagnostic-laboratory.jpg",
+    aspectRatio: "landscape",
     imageAlt:
       "A high-end diagnostic laboratory at Maryland Healthcare, showing a focused professional working with state-of-the-art automated systems.",
     relatedSlugs: ["general-practice", "internal-medicine", "emergency-trauma"],
