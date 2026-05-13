@@ -32,9 +32,9 @@ export const servicesData: Service[] = [
       "Busy professionals, parents managing after-hours questions, patients needing lab review, prescription support, follow-ups, or private counseling without the commute.",
     ctaLabel: "Book Telehealth Visit",
     slug: "telemedicine",
-    image: "/services/telemedicine.webp",
+    image: "/services/telemedicine.png",
     imageAlt:
-      "A person in a warm home study speaking with a doctor through a video consultation on a laptop.",
+      "A candid over-the-shoulder view of a Nigerian mother in a focused telemedicine consultation with a doctor on a tablet.",
     relatedSlugs: ["general-practice", "diagnostic-laboratory", "mental-health"],
     detail: {
       heroTagline: "Your doctor is always within reach, no commute required.",
@@ -69,9 +69,9 @@ export const servicesData: Service[] = [
       "Annual exams, chronic disease management, first consultations, admissions, surgical referrals, and families who want one steady medical home.",
     ctaLabel: "Schedule Annual Exam",
     slug: "general-practice",
-    image: "/services/general-practice.webp",
+    image: "/services/general-practice.png",
     imageAlt:
-      "A doctor's hands holding a clipboard during a careful consultation in a bright clinic room.",
+      "A professional and empathetic Nigerian doctor engaged in a thoughtful consultation with a patient in a modern clinic.",
     relatedSlugs: ["internal-medicine", "diagnostic-laboratory", "pediatrics"],
     detail: {
       heroTagline: "The cornerstone of a health journey that lasts a lifetime.",
@@ -106,9 +106,9 @@ export const servicesData: Service[] = [
       "Expectant mothers seeking antenatal care, safe delivery planning, caesarean capability, newborn support, family planning, and high-risk pregnancy management.",
     ctaLabel: "Explore Maternity Plans",
     slug: "maternity",
-    image: "/services/maternity.webp",
+    image: "/services/maternity.png",
     imageAlt:
-      "A serene maternity suite with soft daylight through curtains and a calm private-room atmosphere.",
+      "A professional and premium maternity suite at Maryland Healthcare, showing a Nigerian mother and newborn in a clean, modern clinical environment.",
     relatedSlugs: ["obstetrics-gynecology", "pediatrics", "diagnostic-laboratory"],
     detail: {
       heroTagline:
@@ -144,7 +144,7 @@ export const servicesData: Service[] = [
       "Well-child visits, immunization schedules, developmental screening, childhood illnesses, nutrition guidance, and adolescent health support.",
     ctaLabel: "Consult a Pediatrician",
     slug: "pediatrics",
-    image: "/services/pediatrics.webp",
+    image: "/services/pediatrics.png",
     imageAlt:
       "A pediatrician warmly engaging a child in a bright clinic room with soft natural light.",
     relatedSlugs: ["maternity", "general-practice", "mental-health"],
@@ -181,9 +181,9 @@ export const servicesData: Service[] = [
       "Women seeking annual wellness exams, family planning, fertility consultations, screening, menopause support, or gynecological procedures.",
     ctaLabel: "Schedule Consultation",
     slug: "obstetrics-gynecology",
-    image: "/services/obstetrics-gynecology.webp",
+    image: "/services/obstetrics-gynecology.png",
     imageAlt:
-      "A private consultation between a doctor and patient in a refined women's health room.",
+      "A professional and empathetic Nigerian female doctor in a focused OBGYN consultation within a modern, well-equipped clinic.",
     relatedSlugs: ["maternity", "diagnostic-laboratory", "internal-medicine"],
     detail: {
       heroTagline: "Comprehensive women's health, from routine wellness to complex care.",
@@ -218,9 +218,9 @@ export const servicesData: Service[] = [
       "Patients seeking therapy, psychiatric evaluation, stress support, depression care, grief counseling, or adolescent mental health guidance.",
     ctaLabel: "Book a Session",
     slug: "mental-health",
-    image: "/services/mental-health.webp",
+    image: "/services/mental-health.png",
     imageAlt:
-      "A quiet therapy suite with comfortable seating and greenery visible through a large window.",
+      "A serene and professional mental health therapy suite at Maryland Healthcare, featuring a kind Nigerian therapist in a calm, private environment.",
     relatedSlugs: ["telemedicine", "pediatrics", "general-practice"],
     detail: {
       heroTagline: "A safe space for the conversations that matter most.",
@@ -255,9 +255,9 @@ export const servicesData: Service[] = [
       "Routine blood work, culture and sensitivity, liver and kidney profiles, malaria and hepatitis screening, fertility profiles, and employment medical checks.",
     ctaLabel: "View Lab Services",
     slug: "diagnostic-laboratory",
-    image: "/services/diagnostic-laboratory.webp",
+    image: "/services/diagnostic-laboratory.jpg",
     imageAlt:
-      "Modern diagnostic laboratory equipment with clean lines and soft indicator lights.",
+      "A high-end diagnostic laboratory at Maryland Healthcare, showing a focused professional working with state-of-the-art automated systems.",
     relatedSlugs: ["general-practice", "internal-medicine", "emergency-trauma"],
     detail: {
       heroTagline: "Precision diagnostics that move at the speed of your treatment plan.",
@@ -292,9 +292,9 @@ export const servicesData: Service[] = [
       "Life-threatening symptoms, accident injuries, sudden severe illness, cardiac emergencies, pediatric emergencies, and trauma requiring immediate physician-led care.",
     ctaLabel: "Emergency Directions",
     slug: "emergency-trauma",
-    image: "/services/emergency-trauma.webp",
+    image: "/services/emergency-trauma.jpg",
     imageAlt:
-      "A professional emergency entrance at dusk with focused lighting and modern architecture.",
+      "The modern and professional facade of Maryland Hospital, showing a state-of-the-art medical building with high-end architecture.",
     relatedSlugs: ["diagnostic-laboratory", "internal-medicine", "general-practice"],
     detail: {
       heroTagline: "When seconds count, we are already ready.",
@@ -329,9 +329,9 @@ export const servicesData: Service[] = [
       "Adults managing diabetes, hypertension, cardiovascular concerns, respiratory disease, gastrointestinal conditions, endocrine disorders, or multi-system symptoms.",
     ctaLabel: "Schedule Exam",
     slug: "internal-medicine",
-    image: "/services/internal-medicine.webp",
+    image: "/services/internal-medicine.png",
     imageAlt:
-      "An internal medicine specialist reviewing a digital chart with a patient in a refined office.",
+      "A senior internal medicine specialist at Maryland Healthcare reviewing complex medical data with a patient in a premium private office.",
     relatedSlugs: ["general-practice", "diagnostic-laboratory", "telemedicine"],
     detail: {
       heroTagline: "Where complex conditions meet unwavering attention to detail.",
