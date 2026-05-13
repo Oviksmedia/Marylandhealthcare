@@ -18,12 +18,12 @@ const doctors = [
     name: "Dr. Chinazo Dike",
     image: "/leadership/dr-chinazo-dike.png",
     alt: "Portrait of Dr. Chinazo Dike",
-    aspect: "square",
+    aspect: "portrait",
     offset: "offsetTwo",
   },
   {
     name: "Dr. Daniel Erondu",
-    image: "/leadership/dr-daniel-erondu.png",
+    image: "/leadership/dr-daniel-erondu.jpg",
     alt: "Portrait of Dr. Daniel Erondu",
     aspect: "portrait",
     offset: "offsetThree",
@@ -32,7 +32,7 @@ const doctors = [
     name: "Dr. Uchenna Chichi",
     image: "/leadership/dr-uchenna-chichi.png",
     alt: "Portrait of Dr. Uchenna Chichi",
-    aspect: "square",
+    aspect: "portrait",
     offset: "offsetOne",
   },
   {
@@ -44,9 +44,9 @@ const doctors = [
   },
   {
     name: "Dr. Alex",
-    image: "/leadership/dr-alex.jpg",
+    image: "/leadership/dr-alex.png",
     alt: "Portrait of Dr. Alex",
-    aspect: "square",
+    aspect: "portrait",
     offset: "offsetThree",
   },
 ];
