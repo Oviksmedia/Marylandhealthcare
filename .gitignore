@@ -42,3 +42,5 @@ next-env.d.ts
 
 # local agent workflow scratch state
 .agents/workflow-state.json
+
+.vercel
