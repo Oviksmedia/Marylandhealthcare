@@ -60,9 +60,26 @@ export default function LoginPage() {
     <div className={styles.container}>
       <div className={styles.brandSide}>
         <div className={styles.brandContent}>
-          <img src="/logo.png" alt="Maryland Healthcare" className={styles.logoImg} />
+          <div className={styles.logoWrapper}>
+            <img src="/logo.png" alt="Maryland Healthcare" className={styles.logoImg} />
+          </div>
           <h1>Maryland Healthcare</h1>
-          <p>Excellence in every heartbeat. Secure access to your health records and portal dashboard.</p>
+          <p className={styles.brandSubtitle}>Excellence in every heartbeat. Secure access to your health records and portal dashboard.</p>
+          
+          <div className={styles.trustGrid}>
+            <div className={styles.trustCard}>
+              <span className={styles.trustVal}>44+</span>
+              <span className={styles.trustLbl}>Years of Care</span>
+            </div>
+            <div className={styles.trustCard}>
+              <span className={styles.trustVal}>99%</span>
+              <span className={styles.trustLbl}>Satisfaction</span>
+            </div>
+            <div className={styles.trustCard}>
+              <span className={styles.trustVal}>24/7</span>
+              <span className={styles.trustLbl}>Live Support</span>
+            </div>
+          </div>
         </div>
         <div className={styles.brandFooter}>
           <span>&copy; {new Date().getFullYear()} Maryland Healthcare Center</span>
