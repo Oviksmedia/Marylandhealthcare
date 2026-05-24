@@ -37,17 +37,19 @@ export default function Nav() {
       initial={prefersReducedMotion ? false : { opacity: 0, y: -16 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
+      <a className={styles.skipLink} href="#main">
+        Skip to main content
+      </a>
       <nav aria-label="Primary navigation" className={`container ${styles.nav}`}>
         <Link className={styles.brand} href="/" onClick={() => setIsOpen(false)}>
           <Image
             alt="Maryland Healthcare logo"
             className={styles.logo}
-            height={40}
+            height={56}
             priority
             src="/logo.png"
-            width={76}
+            width={123}
           />
-          <span>Maryland Healthcare</span>
         </Link>
 
         <div className={styles.desktopLinks}>
@@ -70,7 +72,7 @@ export default function Nav() {
             <strong>0907 448 7448</strong>
           </a>
           <Link className={styles.bookButton} href="/book">
-            <CalendarCheck aria-hidden size={18} />
+            <CalendarCheck aria-hidden size={16} />
             <span>Book Appointment</span>
           </Link>
         </div>
@@ -135,7 +137,7 @@ export default function Nav() {
                   href="/book"
                   onClick={() => setIsOpen(false)}
                 >
-                  <CalendarCheck aria-hidden size={18} />
+                  <CalendarCheck aria-hidden size={16} />
                   <span>Book Appointment</span>
                 </Link>
               </div>

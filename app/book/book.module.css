@@ -660,3 +660,663 @@
     width: 100%;
   }
 }
+
+
+.changeAccountBtn:hover {
+  background: var(--primary);
+  color: var(--text-inverse);
+  transform: translateY(-1px);
+}
+
+/* Profile Connected Card */
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid oklch(0.40 0.13 193 / 0.24);
+  background: oklch(0.40 0.13 193 / 0.05);
+  padding: 1.2rem;
+  border-radius: var(--radius-md);
+}
+
+.profileCardIcon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.profileCardInfo {
+  flex: 1;
+}
+
+.profileCardInfo h3 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.profileCardInfo p {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.changeAccountBtn {
+  padding: 0.4rem 1rem;
+  background: oklch(0.40 0.13 193 / 0.1);
+  border: none;
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+/* Password Input Wrapper */
+.passwordWrapper {
+  position: relative;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Password Strength Indicator */
+.passwordStrength {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  height: 4px;
+}
+
+.passwordStrengthStep {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  background: oklch(0.90 0.01 193);
+  transition: background var(--duration-fast) var(--ease-premium);
+}
+
+.passwordStrengthStep.active {
+  background: var(--feedback-warning);
+}
+
+.passwordStrengthStep.strong {
+  background: var(--feedback-success);
+}
+
+.generatePasswordBtn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 700;
+  padding: 0;
+  text-decoration: underline;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-premium);
+}
+
+.generatePasswordBtn:hover {
+  color: var(--primary-bright);
+}
+
+/* Login Error */
+.loginError {
+  color: var(--feedback-error);
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  grid-column: 1 / -1;
+}
+
+/* Login Button */
+.loginBtn {
+  grid-column: 1 / -1;
+  padding: 0.8rem 2rem;
+  background: var(--primary);
+  color: var(--text-inverse);
+  border-radius: var(--radius-pill);
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  transition: all var(--duration-std) var(--ease-premium);
+}
+
+.loginBtn:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 10px 24px -8px oklch(0.40 0.13 193 / 0.4);
+  transform: var(--hover-lift);
+}
+
+.loginBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Price Display */
+.priceDisplay {
+  font-style: normal;
+  color: var(--primary-bright);
+  font-weight: 600;
+  display: block;
+  margin: 0.15rem 0;
+}
+
+/* Follow-up Eligibility */
+.followUpCard {
+  border-radius: var(--radius-md);
+  transition: all var(--duration-std) var(--ease-premium);
+}
+
+.followUpCard.eligible {
+  border: 1px solid var(--feedback-success);
+  background: oklch(0.55 0.15 155 / 0.05);
+}
+
+.followUpCard.notEligible {
+  border: 1px solid var(--feedback-error);
+  background: oklch(0.55 0.20 25 / 0.05);
+}
+
+.followUpChecking {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.followUpEligible {
+  color: oklch(0.35 0.10 155);
+}
+
+.followUpNotEligible {
+  color: oklch(0.40 0.12 25);
+}
+
+/* Checkout Error Card */
+.checkoutError {
+  background: oklch(0.55 0.20 25 / 0.1);
+  border: 1px solid oklch(0.55 0.20 25 / 0.3);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: oklch(0.40 0.12 25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.checkoutErrorContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkoutErrorContent span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.checkoutErrorDismiss {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+/* Review Card */
+.reviewCard {
+  background: oklch(0.99 0.005 85 / 0.5);
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid oklch(0.40 0.13 193 / 0.08);
+}
+
+.reviewField {
+  margin-bottom: 1rem;
+}
+
+.reviewField strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: var(--type-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.reviewValue {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.reviewValueMuted {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.reviewDivider {
+  border: 0;
+  border-bottom: 1px solid oklch(0.40 0.13 193 / 0.08);
+  margin: 1rem 0;
+}
+
+/* Payment Note */
+.paymentNote {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 1rem 0 0 0;
+  text-align: center;
+}
+
+/* Review Field Values */
+.reviewFieldValue {
+  margin: 0.4rem 0 0 0;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.reviewFieldValueReason {
+  margin: 0.4rem 0 0 0;
+  color: var(--text-main);
+  font-style: italic;
+  white-space: pre-wrap;
+}
+
+/* Success Panel */
+.successText {
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: 600;
+  text-align: center;
+}
+
+.confirmationGridSpacing {
+  margin-top: 2rem;
+}
+
+/* Video Room Card (in-context, not telemedicine page) */
+.videoRoomContext {
+  background: oklch(0.40 0.13 193 / 0.05);
+  border: 1px solid oklch(0.40 0.13 193 / 0.15);
+  color: var(--primary);
+  margin: 2rem auto 0 auto;
+}
+
+.videoRoomContext h2 {
+  color: var(--primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.videoRoomContext p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.videoRoomJoinBtn {
+  background: var(--primary);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.8rem 2rem;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  transition: all var(--duration-std) var(--ease-premium);
+}
+
+.videoRoomJoinBtn:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 10px 24px -8px oklch(0.40 0.13 193 / 0.4);
+  transform: var(--hover-lift);
+}
+
+.videoRoomJoinBtn.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Emergency Disclaimer Spacing */
+.emergencyDisclaimerSpacing {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Home Link Spacing */
+.homeLinkSpacing {
+  margin: 2rem auto 0 auto;
+}
+
+/* Processing Spinner */
+.processingSpinner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Nested List in Modal */
+.modalNestedList {
+  list-style-type: circle;
+  padding-left: 1.25rem;
+  margin-top: 0.25rem;
+}
+
+/* Modal Note */
+.modalNote {
+  font-style: italic;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Form Grid Spacing */
+.formGridSpacing {
+  margin-top: 1.5rem;
+}
+
+/* Telemedicine Consent & Disclaimer Styles */
+.consentCard {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(13, 62, 59, 0.12);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(13, 62, 59, 0.04);
+  transition: all var(--duration-std) var(--ease-premium);
+}
+
+.consentCard:hover {
+  border-color: rgba(13, 62, 59, 0.24);
+  box-shadow: 0 12px 40px 0 rgba(13, 62, 59, 0.08);
+}
+
+.consentCheckboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.consentCheckboxInput {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.15rem;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.consentText {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.consentModalTrigger {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 700;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-premium);
+  display: inline;
+}
+
+.consentModalTrigger:hover {
+  color: var(--primary-bright);
+}
+
+/* Glassmorphic Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(13, 62, 59, 0.35);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+  animation: modalFadeIn 0.3s var(--ease-premium) forwards;
+}
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px -15px rgba(13, 62, 59, 0.15);
+  animation: modalSlideUp 0.4s var(--ease-premium) forwards;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(13, 62, 59, 0.08);
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: var(--primary);
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.modalHeader span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+.modalCloseBtn:hover {
+  color: var(--primary-bright);
+  background: rgba(13, 62, 59, 0.05);
+}
+
+.modalBody {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalBody section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.modalBody h4 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.modalBody p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+.modalBody ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modalBody li {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-main);
+}
+
+.clinicalDisclaimerWarning {
+  background: rgba(214, 73, 59, 0.08);
+  border-left: 4px solid var(--feedback-error);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.clinicalDisclaimerWarning h4 {
+  color: var(--feedback-error) ;
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.05em;
+}
+
+.clinicalDisclaimerWarning p {
+  color: var(--badge-error-text) ;
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.modalSignature {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(13, 62, 59, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.modalSignature p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.modalSignature strong {
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(13, 62, 59, 0.08);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.modalDeclineBtn {
+  padding: 0.8rem 1.8rem;
+  border: 1.5px solid var(--primary);
+  background: none;
+  color: var(--primary);
+  font-weight: 700;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+.modalDeclineBtn:hover {
+  background: rgba(13, 62, 59, 0.05);
+  transform: translateY(-1px);
+}
+
+.modalAcceptBtn {
+  padding: 0.8rem 1.8rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+.modalAcceptBtn:hover {
+  background: var(--primary-bright);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

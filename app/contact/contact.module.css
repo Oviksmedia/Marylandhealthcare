@@ -276,6 +276,38 @@
   min-width: min(100%, 18rem);
 }
 
+.submitRow button:disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.successMsg {
+  background: oklch(0.95 0.06 155);
+  border: 1px solid oklch(0.75 0.12 155);
+  border-radius: var(--radius-md);
+  color: oklch(0.30 0.10 155);
+  font-size: var(--type-body);
+  padding: 1rem 1.25rem;
+}
+
+.errorMsg {
+  background: oklch(0.95 0.06 25);
+  border: 1px solid oklch(0.75 0.12 25);
+  border-radius: var(--radius-md);
+  color: oklch(0.30 0.10 25);
+  font-size: var(--type-body);
+  padding: 1rem 1.25rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .telemedicineBox a,
   .submitRow button {

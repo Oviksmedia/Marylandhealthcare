@@ -1,0 +1,739 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerInfo h1 {
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.headerInfo p {
+  color: var(--text-muted);
+}
+
+.addBtn {
+  background: var(--primary);
+  color: white;
+  border: 0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.addBtn:hover {
+  transform: translateY(-2px);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search {
+  flex: 1;
+  max-width: 400px;
+  background: var(--bg-surface);
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-muted);
+}
+
+.search input {
+  background: transparent;
+  border: 0;
+  outline: none;
+  width: 100%;
+  color: var(--text-main);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.doctorCard {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.specialtyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: oklch(0.96 0.01 193 / 0.8);
+  color: var(--primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.cardFooter {
+  border-top: 1px solid oklch(0.78 0.02 193 / 0.05);
+  padding-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.viewBtn {
+  background: transparent;
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.15);
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 2rem;
+}
+
+.modal {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modalHeader {
+  padding: 2rem 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalHeader h2 {
+  font-size: 1.5rem;
+  font-family: var(--font-serif);
+  color: var(--primary);
+}
+
+.modalHeader button {
+  background: var(--bg-canvas);
+  border: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalHeader button:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.modalForm {
+  padding: 0 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-left: 0.25rem;
+}
+
+.inputGroup input, .inputGroup select {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: var(--bg-canvas);
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 14px;
+  font-size: 1rem;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.inputGroup input:focus, .inputGroup select:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px oklch(0.12 0.04 193 / 0.05);
+}
+
+.submitBtn {
+  background: var(--primary);
+  color: white;
+  border: 0;
+  padding: 1.1rem;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.2s ease;
+}
+
+.submitBtn:hover {
+  background: oklch(0.18 0.05 193);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -6px oklch(0.12 0.04 193 / 0.3);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  padding: 5rem 2rem;
+  background: var(--bg-surface);
+  border: 2px dashed oklch(0.78 0.02 193 / 0.1);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+}
+
+.emptyIcon {
+  color: oklch(0.78 0.02 193 / 0.2);
+}
+
+/* More Actions Dropdown */
+.moreMenuContainer {
+  position: relative;
+}
+
+.moreBtn {
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.moreBtn:hover {
+  background: var(--bg-canvas);
+  color: var(--primary);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  z-index: 50;
+  min-width: 150px;
+}
+
+.dropdownMenu button {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdownMenu button:hover {
+  background: var(--bg-canvas);
+  color: var(--primary);
+}
+
+.dropdownMenu .dropdownDelete {
+  color: #ef4444;
+}
+
+.dropdownMenu .dropdownDelete:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* Clinical Schedule Modal */
+.scheduleModal {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  animation: modalScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.scheduleContent {
+  padding: 2rem;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.appointmentsWrapper {
+  background: var(--bg-canvas);
+  border-radius: 16px;
+  border: 1px solid oklch(0.78 0.02 193 / 0.05);
+  overflow: hidden;
+}
+
+.scheduleTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.scheduleTable th {
+  padding: 1rem 1.5rem;
+  background: oklch(0.98 0.01 193 / 0.5);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.scheduleTable td {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.05);
+  vertical-align: middle;
+}
+
+.badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.badgeVirtual {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.badgeClinic {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ==========================================
+   Premium Glassmorphic Modals & Toast Alerts
+   ========================================== */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.03),
+    0 30px 60px -12px rgba(15, 23, 42, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transform: scale(0.95);
+  animation: scaleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.modalHeaderCustom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modalHeaderCustom h3 {
+  font-size: 1.35rem;
+  font-family: var(--font-serif);
+  color: var(--primary);
+  font-weight: 700;
+  margin: 0;
+}
+
+.warningIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: oklch(0.6 0.18 29 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modalBody {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.warningBox {
+  background: oklch(0.6 0.18 29 / 0.06);
+  border-left: 4px solid oklch(0.6 0.18 29);
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: oklch(0.45 0.15 29);
+}
+
+.warningBox p {
+  margin: 0;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-main);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  background: white;
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.confirmBtn {
+  background: linear-gradient(135deg, oklch(0.6 0.18 29), oklch(0.5 0.16 29));
+  border: 0;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 8px 16px -4px oklch(0.6 0.18 29 / 0.3);
+  transition: all 0.2s ease;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px -4px oklch(0.6 0.18 29 / 0.4);
+}
+
+.confirmBtn:disabled, .cancelBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sleek Floating Toast Notification */
+.toast {
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4000;
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toastInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 
+    0 10px 30px rgba(15, 23, 42, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.toastSuccess .toastInner {
+  background: rgba(240, 253, 244, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #166534;
+}
+
+.toastError .toastInner {
+  background: rgba(254, 242, 242, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #991b1b;
+}
+
+.toastCloseBtn {
+  background: transparent;
+  border: 0;
+  color: currentColor;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.toastCloseBtn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Loading Container */
+.loadingContainer {
+  padding: 4rem;
+  text-align: center;
+}
+
+/* Add Button Margin */
+.addBtnMargin {
+  margin-top: 1rem;
+}
+
+/* Schedule Modal Header */
+.scheduleModalHeader {
+  padding: 2rem 2rem 1.5rem;
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.1);
+}
+
+.scheduleModalTitle {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+.scheduleModalDoctor {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Loading Text */
+.loadingText {
+  margin-top: 1rem;
+  color: var(--text-muted);
+}
+
+/* Patient Info */
+.patientInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.patientName {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.patientPhone {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Time Info */
+.timeInfo {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+.timeValue {
+  color: var(--text-muted);
+}
+
+/* Empty Schedule State */
+.emptySchedule {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.emptyScheduleIcon {
+  margin: 0 auto 1rem;
+  opacity: 0.4;
+}
+
+/* Status Badge */
+.statusBadge {
+  text-transform: capitalize;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.statusBadge[data-status="completed"] {
+  color: #10b981;
+}
+
+.statusBadge[data-status="cancelled"] {
+  color: #ef4444;
+}

@@ -61,7 +61,7 @@ export default function Hero() {
         transition={{ duration: 1.2, ease }}
       >
         <Image
-          alt="Maryland Healthcare physician standing in a clinical consultation room"
+          alt="Warm, modern consultation room at Maryland Healthcare clinic"
           className={styles.heroImage}
           fill
           priority
@@ -80,7 +80,7 @@ export default function Hero() {
             transition={{ duration: 0.7, ease, delay: 0.1 }}
           >
             <span aria-hidden />
-            Est. 1982
+            Since 1982
           </motion.div>
 
           <motion.h1
@@ -88,16 +88,25 @@ export default function Hero() {
             initial={initial}
             transition={{ duration: 0.7, ease, delay: 0.2 }}
           >
-            44 Years of Trusted Care.
+            44 Years of Trusted Care
           </motion.h1>
+
+          <motion.p
+            animate={{ opacity: 1, y: 0 }}
+            className={styles.tagline}
+            initial={initial}
+            transition={{ duration: 0.7, ease, delay: 0.25 }}
+          >
+            Still Here. Still Yours.
+          </motion.p>
 
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className={styles.lede}
             initial={initial}
-            transition={{ duration: 0.7, ease, delay: 0.3 }}
+            transition={{ duration: 0.7, ease, delay: 0.35 }}
           >
-            Still Here. Still Yours. A legacy of institutional excellence, blending generations of
+            A legacy of institutional excellence, blending generations of
             medical expertise with a personal commitment to your health.
           </motion.p>
 
@@ -111,10 +120,10 @@ export default function Hero() {
               Explore Services
               <ArrowRight aria-hidden size={20} />
             </Link>
-            <a className={styles.ghostCta} href="#telemedicine">
+            <Link className={styles.ghostCta} href="/book">
               Virtual Visit
               <Video aria-hidden size={19} />
-            </a>
+            </Link>
           </motion.div>
         </div>
       </div>
@@ -136,6 +145,17 @@ export default function Hero() {
             </div>
           ))}
         </div>
+      </motion.div>
+      <motion.div
+        animate={{ opacity: 1 }}
+        className={styles.scrollIndicator}
+        initial={{ opacity: 0 }}
+        transition={{ delay: 1, duration: 1 }}
+      >
+        <div className={styles.mouse}>
+          <div className={styles.wheel} />
+        </div>
+        <span>Scroll</span>
       </motion.div>
     </section>
   );

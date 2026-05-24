@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <>
       <Nav />
-      <main>
+      <main id="main">
         <Hero />
         <HMOTrust />
         <Telemedicine />

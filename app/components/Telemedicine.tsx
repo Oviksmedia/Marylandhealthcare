@@ -83,7 +83,7 @@ export default function Telemedicine() {
             viewport={{ amount: 0.3, once: true }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <Link className={styles.primaryCta} href="/contact#appointment-form">
+            <Link className={styles.primaryCta} href="/book">
               Book a Virtual Session
               <ArrowRight aria-hidden size={19} />
             </Link>

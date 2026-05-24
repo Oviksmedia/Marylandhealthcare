@@ -32,21 +32,21 @@ export default function Footer() {
       <div className={`container ${styles.grid}`}>
         <div className={styles.brandColumn}>
           <Link className={styles.brandLockup} href="/">
-            <span className={styles.logoSeal}>
-              <Image
-                alt=""
-                className={styles.logo}
-                height={40}
-                src="/logo.png"
-                width={76}
-              />
-            </span>
+            <Image
+              alt="Maryland Healthcare logo"
+              className={styles.logo}
+              height={67}
+              src="/logo.png"
+              width={147}
+            />
             <span>
               <strong>Maryland Healthcare</strong>
-              <em>Family Healthcare Since 1982</em>
+              <em>Family Healthcare since 1982</em>
             </span>
           </Link>
-          <p>Providing premier family healthcare services in Port Harcourt for over 44 years.</p>
+          <p className={styles.brandDescription}>
+            Providing premier family healthcare services in Port Harcourt for over 44 years.
+          </p>
           <div className={styles.socials}>
             {socialLinks.map((social) => (
               <a
@@ -64,7 +64,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className={styles.linkColumn}>
+        <nav aria-label="Footer directory" className={styles.linkColumn}>
           <h2>Directory</h2>
           <Link href="/services">Services</Link>
           <Link href="/services/telemedicine">Telemedicine</Link>
@@ -73,22 +73,22 @@ export default function Footer() {
           <Link href="/insights">Insights</Link>
           <Link href="/book">Book Appointment</Link>
           <Link href="/contact">Contact Us</Link>
-        </div>
+        </nav>
 
         <div className={styles.contactColumn}>
           <h2>Find Us</h2>
-          <p>
+          <p className={styles.contactItem}>
             <MapPin aria-hidden size={18} />
-            14 Chief Elechi Amadi Road, Rumuokwurushi, Port Harcourt, Rivers State, Nigeria
+            <span>14 Chief Elechi Amadi Road, Rumuokwurushi, Port Harcourt, Rivers State, Nigeria</span>
           </p>
-          <p>
+          <a className={styles.contactItemLink} href="mailto:info@marylandhealthcare.com.ng">
             <Mail aria-hidden size={18} />
-            info@marylandhealthcare.com.ng
-          </p>
-          <p>
+            <span>info@marylandhealthcare.com.ng</span>
+          </a>
+          <a className={styles.contactItemLink} href="tel:+2349134301436">
             <Phone aria-hidden size={18} />
-            +234 913 430 1436
-          </p>
+            <span>+234 913 430 1436</span>
+          </a>
         </div>
 
         <div className={styles.emergencyBox}>
@@ -96,14 +96,21 @@ export default function Footer() {
             <AlertCircle aria-hidden size={18} />
             <span>Emergency Line</span>
           </div>
-          <a href="tel:+2349074487448">0907 448 7448</a>
-          <p>Immediate 24/7 trauma support from Maryland Healthcare&apos;s emergency team.</p>
+          <a className={styles.emergencyNumber} href="tel:+2349074487448">
+            0907 448 7448
+          </a>
+          <p className={styles.emergencyText}>
+            Immediate 24/7 trauma support from Maryland Healthcare&apos;s emergency team.
+          </p>
+          <a className={styles.emergencyAction} href="tel:+2349074487448">
+            Call now
+          </a>
         </div>
       </div>
 
       <div className={`container ${styles.bottom}`}>
         <p>Copyright 2026 Maryland Healthcare. Established 1982. All rights reserved.</p>
-        <div>
+        <div className={styles.bottomLinks}>
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
         </div>

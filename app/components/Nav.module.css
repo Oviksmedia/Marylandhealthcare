@@ -31,10 +31,27 @@
 }
 
 .logo {
-  height: 40px;
+  height: 56px;
   object-fit: contain;
   object-position: left center;
   width: auto;
+}
+
+.skipLink {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--primary);
+  color: var(--text-inverse);
+  padding: 0.5rem 1rem;
+  z-index: 100;
+  transition: top var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.skipLink:focus {
+  top: 0;
 }
 
 .desktopLinks {
@@ -47,12 +64,11 @@
 .desktopLinks a {
   border-bottom: 2px solid transparent;
   color: var(--text-main);
-  font-size: var(--type-eyebrow);
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.02em;
   padding-bottom: 0.35rem;
   text-decoration: none;
-  text-transform: uppercase;
   transition:
     border-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
@@ -94,7 +110,7 @@
 }
 
 .emergencyButton {
-  background: oklch(0.58 0.17 30 / 0.055);
+  background: transparent;
   border: 1px solid oklch(0.58 0.17 30 / 0.58);
   color: var(--accent-emergency);
   letter-spacing: 0.01em;
@@ -217,9 +233,7 @@
     min-height: 5rem;
   }
 
-  .brand span {
-    display: none;
-  }
+
 
   .desktopLinks,
   .desktopActions {

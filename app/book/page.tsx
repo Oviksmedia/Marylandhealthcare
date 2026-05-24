@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import BookingWizard from "./BookingWizard";
+import BookingClient from "./BookingClient";
 
 export const metadata: Metadata = {
   title: "Book Appointment | Maryland Healthcare",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function BookPage() {
-  return <BookingWizard />;
+  return <BookingClient />;
 }

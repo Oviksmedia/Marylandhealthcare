@@ -30,6 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# credentials (Google service account keys)
+maryland-telemedicine-*.json
+
 # env files (can opt-in for committing if needed)
 .env*
 
@@ -39,3 +42,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch directory for temporary scripts
+/scratch/
+

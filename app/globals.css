@@ -75,6 +75,54 @@
   --duration-fast: 0.15s;
   --duration-std: 0.4s;
   --duration-slow: 0.8s;
+
+  /* Glassmorphism depth tokens */
+  --glass-blur: blur(16px);
+  --glass-blur-heavy: blur(24px);
+  --glass-bg: oklch(0.98 0.01 85 / 0.72);
+  --glass-bg-elevated: oklch(0.98 0.01 85 / 0.88);
+  --glass-border: oklch(0.40 0.13 193 / 0.10);
+  --glass-border-hover: oklch(0.40 0.13 193 / 0.18);
+
+  /* Input & form tokens */
+  --input-bg: oklch(0.99 0.005 85);
+  --input-border: oklch(0.88 0.02 193);
+  --input-border-focus: var(--primary-bright);
+  --input-placeholder: oklch(0.62 0.02 220);
+  --input-radius: var(--radius-md);
+  --input-height: 3.25rem;
+  --input-padding: 0 1rem;
+
+  /* Card tokens */
+  --card-bg: oklch(0.99 0.005 85);
+  --card-border: oklch(0.92 0.015 193);
+  --card-padding: 1.75rem;
+  --card-radius: var(--radius-md);
+  --card-shadow: 0 2px 12px -2px oklch(0.20 0.03 193 / 0.06), 0 0 0 1px oklch(0.92 0.015 193);
+  --card-shadow-hover: 0 8px 32px -8px oklch(0.20 0.03 193 / 0.10), 0 0 0 1px oklch(0.40 0.13 193 / 0.15);
+
+  /* Status & badge tokens */
+  --badge-success-bg: oklch(0.94 0.04 155);
+  --badge-success-text: oklch(0.35 0.10 155);
+  --badge-warning-bg: oklch(0.95 0.06 75);
+  --badge-warning-text: oklch(0.40 0.10 75);
+  --badge-error-bg: oklch(0.94 0.04 25);
+  --badge-error-text: oklch(0.40 0.12 25);
+  --badge-info-bg: var(--primary-light);
+  --badge-info-text: var(--primary);
+
+  /* Interactive state tokens */
+  --hover-lift: translateY(-2px);
+  --hover-lift-lg: translateY(-4px);
+  --press-scale: scale(0.98);
+  --focus-ring: 0 0 0 3px oklch(0.65 0.17 193 / 0.25);
+  --focus-ring-error: 0 0 0 3px oklch(0.55 0.20 25 / 0.25);
+
+  /* Table tokens */
+  --table-header-bg: oklch(0.97 0.01 193);
+  --table-row-hover: oklch(0.97 0.01 193 / 0.6);
+  --table-border: oklch(0.93 0.01 193);
+  --table-stripe: oklch(0.98 0.005 85);
 }
 
 * {

@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, HeartPulse, MapPin, Phone, Send, Video } from "lucide-react";
+import { ArrowRight, HeartPulse, MapPin, Phone, Send, Video, Loader2 } from "lucide-react";
 import Link from "next/link";
-import type { FormEvent } from "react";
+import { useState } from "react";
+import { submitAppointmentRequest } from "./actions";
 import styles from "./contact.module.css";
 
 const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -11,9 +12,28 @@ const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
 export default function ContactClient() {
   const prefersReducedMotion = useReducedMotion();
   const reveal = prefersReducedMotion ? false : { opacity: 0, y: 26 };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitResult, setSubmitResult] = useState<{ success: boolean; error?: string } | null>(null);
 
-  function handleAppointmentSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleAppointmentSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setIsSubmitting(true);
+    setSubmitResult(null);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const result = await submitAppointmentRequest(formData);
+      setSubmitResult(result);
+      if (result.success) {
+        form.reset();
+      }
+    } catch {
+      setSubmitResult({ success: false, error: 'An unexpected error occurred. Please try again.' });
+    }
+
+    setIsSubmitting(false);
   }
 
   return (
@@ -139,10 +159,24 @@ export default function ContactClient() {
               <textarea name="reason" required rows={3} />
             </label>
 
+            {submitResult && (
+              <div className={submitResult.success ? styles.successMsg : styles.errorMsg}>
+                {submitResult.success
+                  ? 'Your request has been submitted! Our care team will contact you shortly.'
+                  : submitResult.error}
+              </div>
+            )}
+
             <div className={styles.submitRow}>
-              <button type="submit">
-                Submit Request
-                <Send aria-hidden size={18} />
+              <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <Loader2 className={styles.spinner} size={18} />
+                ) : (
+                  <>
+                    Submit Request
+                    <Send aria-hidden size={18} />
+                  </>
+                )}
               </button>
               <p>Our care team will contact you shortly to confirm your appointment details.</p>
             </div>
