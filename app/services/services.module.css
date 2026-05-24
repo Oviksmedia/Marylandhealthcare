@@ -81,15 +81,20 @@
 }
 
 .portraitImage {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 2 / 3;
 }
 
 .squareImage {
   aspect-ratio: 1 / 1;
 }
 
+.landscapeImage {
+  aspect-ratio: 16 / 10;
+}
+
 .serviceImage {
   object-fit: cover;
+  object-position: center 15%;
   transition: transform 900ms var(--ease-premium), filter 900ms var(--ease-premium);
 }
 

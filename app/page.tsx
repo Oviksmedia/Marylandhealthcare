@@ -14,12 +14,38 @@ export default function HomePage() {
       <Nav />
       <main id="main">
         <Hero />
-        <HMOTrust />
-        <Telemedicine />
-        <CMDSection />
-        <PracticePillars />
-        <Testimonials />
-        <ClosingCTA />
+        <div className="stackScene" aria-label="Maryland Healthcare homepage sections">
+          <div className="stackLayer">
+            <div className="stackSurface">
+              <HMOTrust />
+            </div>
+          </div>
+          <div className="stackLayer">
+            <div className="stackSurface">
+              <Telemedicine />
+            </div>
+          </div>
+          <div className="stackLayer">
+            <div className="stackSurface">
+              <CMDSection />
+            </div>
+          </div>
+          <div className="stackLayer">
+            <div className="stackSurface">
+              <PracticePillars />
+            </div>
+          </div>
+          <div className="stackLayer">
+            <div className="stackSurface">
+              <Testimonials />
+            </div>
+          </div>
+          <div className="stackLayer">
+            <div className="stackSurface">
+              <ClosingCTA />
+            </div>
+          </div>
+        </div>
       </main>
       <Footer />
     </>

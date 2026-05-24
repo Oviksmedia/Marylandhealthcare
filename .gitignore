@@ -45,4 +45,7 @@ next-env.d.ts
 
 # scratch directory for temporary scripts
 /scratch/
+# local agent workflow scratch state
+.agents/workflow-state.json
 
+.vercel

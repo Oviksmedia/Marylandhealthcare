@@ -56,7 +56,17 @@ export default function ServicesIndexClient() {
               </motion.div>
 
               <motion.div
-                className={`${styles.serviceImageWrap} ${isEven ? styles.squareImage : styles.portraitImage}`}
+                className={`${styles.serviceImageWrap} ${
+                  service.aspectRatio === "landscape"
+                    ? styles.landscapeImage
+                    : service.aspectRatio === "portrait"
+                      ? styles.portraitImage
+                      : service.aspectRatio === "square"
+                        ? styles.squareImage
+                        : isEven
+                          ? styles.squareImage
+                          : styles.portraitImage
+                }`}
                 initial={imageInitial}
                 transition={{ duration: 0.85, ease, delay: 0.14 }}
                 viewport={{ amount: 0.25, once: true }}

@@ -152,6 +152,38 @@
   color: var(--tertiary);
 }
 
+.socialLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.socialLinks a {
+  align-items: center;
+  border: 1px solid oklch(0.40 0.13 193 / 0.18);
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  display: inline-flex;
+  font-size: var(--type-small);
+  font-weight: 800;
+  justify-content: center;
+  min-height: 2.6rem;
+  padding: 0.62rem 1rem;
+  text-decoration: none;
+  transition:
+    background var(--duration-std) var(--ease-premium),
+    border-color var(--duration-std) var(--ease-premium),
+    color var(--duration-std) var(--ease-premium),
+    transform var(--duration-std) var(--ease-premium);
+}
+
+.socialLinks a:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+  transform: translateY(-2px);
+}
+
 .mapShell {
   background: var(--bg-surface);
   border: 1px solid oklch(0.78 0.02 193 / 0.32);
@@ -310,10 +342,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .telemedicineBox a,
+  .socialLinks a,
   .submitRow button {
     transition: none;
   }
 
+  .socialLinks a:hover,
   .submitRow button:hover {
     box-shadow: none;
     transform: none;

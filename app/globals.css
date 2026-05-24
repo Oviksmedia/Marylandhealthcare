@@ -65,10 +65,10 @@
   --radius-xl: 48px;
   --radius-pill: 9999px;
 
-  --shadow-soft: 0 4px 24px -4px rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 8px 32px -8px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 16px 48px -12px rgba(10, 92, 92, 0.15);
-  --shadow-float: 0 20px 60px -15px rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 4px 18px -8px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 8px 26px -16px rgba(0, 0, 0, 0.075);
+  --shadow-hover: 0 14px 36px -22px rgba(10, 92, 92, 0.16);
+  --shadow-float: 0 18px 48px -24px rgba(0, 0, 0, 0.12);
 
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
