@@ -1718,21 +1718,85 @@ export default function BookingWizard() {
               <div className={styles.clinicalDisclaimerWarning}>
                 <h4>EMERGENCY WARNING</h4>
                 <p>
-                  Virtual consultations are not for medical emergencies. If you are experiencing a life-threatening situation, please contact emergency services or visit the nearest hospital immediately.
+                  In the event of an Emergency, do not use this Telemedicine. Maryland Healthcare will not be held liable for any client's misjudgment of the use of this Telemedicine.
                 </p>
               </div>
 
-              <section style={{ marginTop: '1.5rem' }}>
-                <h4>Virtual Clinic Advisory</h4>
-                <p style={{ lineHeight: '1.6', color: 'var(--text-main)', fontSize: '0.95rem' }}>
-                  By proceeding, you agree to participate in a virtual consultation with a licensed healthcare provider. You understand that:
+              <section>
+                <h4>What Is Telemedicine?</h4>
+                <p>
+                  Telemedicine is the use of electronic internet connectivity and telecommunication technology to deliver clinical healthcare services. This facilitates a real-time/live connection between clients and healthcare Providers for the exchange of medical information without requiring participants to be in the same physical location.
                 </p>
-                <ul style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-muted)' }}>
-                  <li>Your consultation will take place over a secure, encrypted video connection.</li>
-                  <li>You will need a stable internet connection and a device with a working camera and microphone.</li>
-                  <li>Clinical notes and prescriptions will be safely recorded in your electronic health record.</li>
+              </section>
+
+              <section>
+                <h4>How Telemedicine Works</h4>
+                <p>
+                  Telemedicine operates by connecting clients and Healthcare Providers through secure digital platforms. Clients can use smartphones, tablets, or computers to schedule appointments, share health data, and communicate with doctors. Behind the scenes, Telemedicine relies on the following to enable smooth and efficient virtual healthcare delivery:
+                </p>
+                <ul>
+                  <li>Reliable internet connectivity for the Client and separate for the Provider.</li>
+                  <li>For Maryland Healthcare:</li>
+                  <ul className={styles.modalNestedList}>
+                    <li>Website as a platform for accessing the Appointment scheduler</li>
+                    <li>An effective appointment scheduling app. on the website</li>
+                    <li>Video conferencing tools, e.g., Zoom or Google Meet</li>
+                    <li>Electronic Health Records for documentation.</li>
+                  </ul>
                 </ul>
               </section>
+
+              <section>
+                <h4>Goals of Telemedicine</h4>
+                <ul>
+                  <li>Improving access to healthcare for people in remote or rural communities</li>
+                  <li>Keeping patients and others safe during infectious disease concerns</li>
+                  <li>Offering primary care services for various conditions</li>
+                  <li>Providing access to medical specialists</li>
+                  <li>Improving communication and coordination among healthcare teams.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h4>Who Should Use Telemedicine Services</h4>
+                <p className={styles.modalNote}>
+                  Note that Telemedicine cannot be used to treat emergencies. Please go to the Hospital nearest to you.
+                </p>
+                <ul>
+                  <li><strong>Rural and Remote Communities:</strong> People who travel from the city to rural or remote locations where services are poor, or where transport costs and risks of loss of life are high.</li>
+                  <li><strong>Homebound/Bedbound Individuals:</strong> or people with mobility challenges</li>
+                  <li><strong>Busy Professionals:</strong> and families with demanding work schedules who cannot easily leave work or arrange care for their children.</li>
+                  <li><strong>International Travelers:</strong> who have a short waiting time and need information on certain challenges.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h4>Medical Conditions and Services Suitable for Telemedicine</h4>
+                <ul>
+                  <li>Chronic Disease Management, like Diabetes Mellitus, Hypertension, and Asthma</li>
+                  <li>Treatment adjustment</li>
+                  <li>Health monitoring</li>
+                  <li>Mental Health Services, e.g., Mental Health Counseling, Behavioural Therapy, Psychologists' care</li>
+                  <li>Routine and follow-up Care, e.g., Wellness visits, Blood pressure monitor, non-emergency follow-up, Prescription Management, Nutrition counseling, Physical Therapy Exercises, Dermatology, some Cardiology Diseases</li>
+                </ul>
+              </section>
+
+              <section>
+                <h4>Key Requirements for Telemedicine Success</h4>
+                <ul>
+                  <li>Strong Internet connectivity for effective communication</li>
+                  <li>Patient's willingness and ability to engage through video communications</li>
+                  <li>Patient's possession of a reliable smartphone, notebooks, laptops, or desktops.</li>
+                  <li>Knowledge of the use of smart devices.</li>
+                  <li>Ability to follow instructions and good cognitive status to understand medical advice.</li>
+                  <li>Signing the Consent Form before accessing the service.</li>
+                </ul>
+              </section>
+
+              <div className={styles.modalSignature}>
+                <p><strong>Steve Ekwelibe</strong></p>
+                <p>2nd. Jan. 2026</p>
+              </div>
             </div>
 
             <div className={styles.modalFooter}>
