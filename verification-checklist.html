@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maryland Healthcare — System Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #0f4c5c;
+      --primary-light: #e8f4f3;
+      --primary-bright: #1a7a7a;
+      --bg: #f8f6f1;
+      --card: #ffffff;
+      --border: #e2ddd5;
+      --text: #1a1a1a;
+      --text-muted: #6b6560;
+      --pass: #16a34a;
+      --pass-bg: #f0fdf4;
+      --pass-border: #bbf7d0;
+      --fail: #dc2626;
+      --fail-bg: #fef2f2;
+      --fail-border: #fecaca;
+      --skip: #d97706;
+      --skip-bg: #fffbeb;
+      --skip-border: #fde68a;
+      --untested: #94a3b8;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 30px -12px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────────── */
+    .header {
+      background: var(--primary);
+      padding: 2.5rem 2rem 2rem;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(15,76,92,0.25);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header p {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .stat-pill {
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .stat-pass { background: rgba(22,163,74,0.2); color: #4ade80; }
+    .stat-fail { background: rgba(220,38,38,0.2); color: #fca5a5; }
+    .stat-remaining { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+
+    .progress-track {
+      width: 100%;
+      max-width: 960px;
+      margin: 1rem auto 0;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22d3ee);
+      border-radius: 100px;
+      transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* ── Main ─────────────────────────────── */
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── Section ──────────────────────────── */
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0 0.75rem;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header:hover .section-title { color: var(--primary-bright); }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--primary);
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .section-count {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--primary-light);
+      padding: 0.2rem 0.65rem;
+      border-radius: 100px;
+    }
+
+    .section-body { display: flex; flex-direction: column; gap: 0.5rem; }
+    .section.collapsed .section-body { display: none; }
+    .section.collapsed .section-header { border-bottom-color: var(--border); }
+
+    /* ── Test Row ─────────────────────────── */
+    .test-row {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 1rem;
+      align-items: center;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .test-row:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .test-row.status-pass { border-left: 4px solid var(--pass); background: var(--pass-bg); }
+    .test-row.status-fail { border-left: 4px solid var(--fail); background: var(--fail-bg); }
+    .test-row.status-skip { border-left: 4px solid var(--skip); background: var(--skip-bg); }
+
+    .test-info { display: flex; flex-direction: column; gap: 0.15rem; }
+    .test-id {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .test-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .test-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+    .test-status select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding: 0.45rem 2rem 0.45rem 0.85rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b6560' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E") no-repeat right 0.6rem center;
+      transition: all 0.2s;
+      min-width: 110px;
+    }
+
+    .test-status select:hover { border-color: var(--primary); }
+    .test-status select:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+    .test-status select.sel-pass { color: var(--pass); border-color: var(--pass); background-color: var(--pass-bg); }
+    .test-status select.sel-fail { color: var(--fail); border-color: var(--fail); background-color: var(--fail-bg); }
+    .test-status select.sel-skip { color: var(--skip); border-color: var(--skip); background-color: var(--skip-bg); }
+
+    .test-notes input {
+      width: 180px;
+      padding: 0.45rem 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--text);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .test-notes input::placeholder { color: #c4bfb8; }
+    .test-notes input:focus { outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary); }
+
+    /* ── Actions Bar ──────────────────────── */
+    .actions-bar {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      z-index: 200;
+    }
+
+    .actions-bar button {
+      padding: 0.7rem 1.25rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    }
+
+    .btn-export {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-export:hover { background: var(--primary-bright); transform: translateY(-2px); }
+
+    .btn-reset {
+      background: white;
+      color: var(--fail);
+      border: 1.5px solid var(--fail) !important;
+    }
+    .btn-reset:hover { background: var(--fail-bg); transform: translateY(-2px); }
+
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      right: 1.5rem;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(15,76,92,0.3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 300;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 700px) {
+      .test-row { grid-template-columns: 1fr; gap: 0.6rem; }
+      .test-notes input { width: 100%; }
+      .stats-bar { flex-wrap: wrap; gap: 0.5rem; }
+      .header-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>System Verification Checklist</h1>
+      <p>Maryland Healthcare Telemedicine — Phase 14 Final QA</p>
+    </div>
+    <div class="stats-bar">
+      <span class="stat-pill stat-pass" id="statPass">✓ 0 Passed</span>
+      <span class="stat-pill stat-fail" id="statFail">✗ 0 Failed</span>
+      <span class="stat-pill stat-remaining" id="statRemaining">○ 0 Remaining</span>
+    </div>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+</div>
+
+<div class="main" id="testContainer"></div>
+
+<div class="actions-bar">
+  <button class="btn-reset" onclick="resetAll()">Reset All</button>
+  <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'mhc_verification_v1';
+
+const sections = [
+  {
+    title: '1. Booking Wizard — Step 1: Modality & Specialty',
+    tests: [
+      { id: 'BK-1.1', name: 'Page loads at /book', desc: 'BookingWizard renders at Step 1A (modality selection). No console errors.' },
+      { id: 'BK-1.2', name: 'In-Clinic card click → auto-advance', desc: 'Clicking "In-Clinic" immediately slides to Step 1B (specialty). All services visible.' },
+      { id: 'BK-1.3', name: 'Telemedicine card click → auto-advance', desc: 'Clicking "Telemedicine" slides to Step 1B. Only General Practice and Mental Health are shown.' },
+      { id: 'BK-1.4', name: 'Back arrow on 1B → returns to 1A', desc: 'Pressing back arrow on specialty sub-step slides back to modality selection.' },
+      { id: 'BK-1.5', name: 'Progress bar updates', desc: 'Step 1A shows 10%, Step 1B shows 20%.' },
+      { id: 'BK-1.6', name: 'Service card selection highlights', desc: 'Clicking a service card applies active styling (white icon, highlighted border). "Continue" button enables.' },
+      { id: 'BK-1.7', name: 'Follow-up toggle visibility', desc: 'Follow-up checkbox appears below services grid on telemedicine. Hidden for in-clinic.' },
+    ]
+  },
+  {
+    title: '2. Booking Wizard — Step 2: Schedule',
+    tests: [
+      { id: 'BK-2.1', name: 'Calendar renders with current month', desc: 'Calendar displays. Past dates are disabled. Weekends may be disabled depending on doctor sessions.' },
+      { id: 'BK-2.2', name: 'Date selection loads time slots', desc: 'Clicking a valid date triggers getDaySlots(). Loading spinner shows, then slots populate.' },
+      { id: 'BK-2.3', name: 'Booked slots are disabled', desc: 'Any slots already taken appear grayed out / unselectable.' },
+      { id: 'BK-2.4', name: 'Slot selection enables Continue', desc: 'Selecting a time slot highlights it and enables the Continue button in the action bar.' },
+      { id: 'BK-2.5', name: 'No slots scenario', desc: 'If no doctors have sessions for the selected day, an appropriate empty state message appears.' },
+    ]
+  },
+  {
+    title: '3. Booking Wizard — Step 3: Patient Details & Auth',
+    tests: [
+      { id: 'BK-3.1', name: 'New patient form fields render', desc: 'First name, last name, email, phone, password, and reason fields all display correctly.' },
+      { id: 'BK-3.2', name: 'Email blur — returning patient detection', desc: 'Enter an existing patient email and blur. System switches to "returning patient" login form.' },
+      { id: 'BK-3.3', name: 'Returning patient login + autofill', desc: 'Logging in as a returning patient auto-fills name and phone from last appointment.' },
+      { id: 'BK-3.4', name: 'Active session auto-detection', desc: 'If already logged in (browser cookie), Step 3 shows the profile card with pre-filled details instead of login form.' },
+      { id: 'BK-3.5', name: 'New patient registration', desc: 'Submitting new patient details creates an auth account (no verification email sent) and a profile row.' },
+      { id: 'BK-3.6', name: 'Password validation', desc: 'Password under 8 chars or missing letters/numbers shows an error. Strong password passes.' },
+      { id: 'BK-3.7', name: 'Continue button gates correctly', desc: 'Continue is disabled until all required fields are filled and credentials are resolved.' },
+    ]
+  },
+  {
+    title: '4. Booking Wizard — Step 4: Cart Review & Payment',
+    tests: [
+      { id: 'BK-4.1', name: 'Review card displays correct data', desc: 'Service, date, time, modality, and price all match selections from previous steps.' },
+      { id: 'BK-4.2', name: 'Price is correct', desc: 'Telemedicine GP = standard rate, Mental Health = higher rate. Follow-up = 50% discount. In-clinic = free.' },
+      { id: 'BK-4.3', name: 'Consent modal for telemedicine', desc: 'Clicking "Confirm & Pay" on telemedicine opens the consent advisory modal. Must agree to proceed.' },
+      { id: 'BK-4.4', name: 'Paystack popup opens', desc: 'After consent, Paystack checkout modal appears with correct amount in kobo.' },
+      { id: 'BK-4.5', name: 'In-clinic direct confirmation', desc: 'For in-clinic bookings, clicking Confirm books immediately without Paystack (no payment needed).' },
+      { id: 'BK-4.6', name: 'Pending booking created before payment', desc: 'Check Supabase: a "pending" / "unpaid" appointment row exists after clicking Confirm but before Paystack completes.' },
+    ]
+  },
+  {
+    title: '5. Booking Wizard — Step 5: Confirmation',
+    tests: [
+      { id: 'BK-5.1', name: 'Confirmation card renders', desc: 'Single elevated card with checkmark icon, "Consultation Confirmed" heading, and appointment details grid.' },
+      { id: 'BK-5.2', name: 'Details are accurate', desc: 'Specialty, date, and time on the confirmation card match the booking.' },
+      { id: 'BK-5.3', name: 'Virtual Clinic Advisory (telemedicine)', desc: 'For telemedicine: advisory panel mentions the secure video link and join instructions.' },
+      { id: 'BK-5.4', name: 'Clinic Check-in (in-clinic)', desc: 'For in-clinic: advisory mentions arriving 15 minutes early.' },
+      { id: 'BK-5.5', name: 'Emergency warning strip', desc: 'Clean AlertTriangle icon + emergency phone number. No garbled emoji.' },
+      { id: 'BK-5.6', name: 'Portal and Homepage buttons work', desc: '"Access Patient Portal" links to /dashboard/my-appointments. "Return to Homepage" links to /.' },
+      { id: 'BK-5.7', name: 'Progress bar hidden on Step 5', desc: 'The step intro / progress bar section is not visible on the confirmation page.' },
+    ]
+  },
+  {
+    title: '6. Database Integrity',
+    tests: [
+      { id: 'DB-6.1', name: 'Appointment row — confirmed status', desc: 'After successful booking, Supabase shows status = "confirmed", payment_status = "paid" (telemedicine) or "unpaid" (in-clinic).' },
+      { id: 'DB-6.2', name: 'paystack_ref column populated', desc: 'Telemedicine bookings have a valid paystack_ref string (e.g. "MHC-..."). In-clinic have null.' },
+      { id: 'DB-6.3', name: 'service column populated', desc: 'The appointment row has the correct service name (e.g. "General Practice", "Mental Health").' },
+      { id: 'DB-6.4', name: 'amount column populated', desc: 'The appointment row has the correct amount in naira (server-calculated, not client-submitted).' },
+      { id: 'DB-6.5', name: 'notes column stores reason', desc: 'The patient reason for visit is stored in the "notes" column, not a "clinical_notes" column.' },
+      { id: 'DB-6.6', name: 'Profile row exists for new patient', desc: 'After new patient registration, a row exists in the profiles table with role = "patient".' },
+      { id: 'DB-6.7', name: 'Auth user exists for new patient', desc: 'After registration, the Supabase Auth dashboard shows a confirmed user with email_confirmed_at set.' },
+    ]
+  },
+  {
+    title: '7. Email Dispatch',
+    tests: [
+      { id: 'EM-7.1', name: 'Welcome email sent (new patient)', desc: 'New patient receives a "Welcome to Maryland Healthcare" email with portal login link.' },
+      { id: 'EM-7.2', name: 'Staff registration notification', desc: 'Staff inbox receives "New Patient Registered" email with patient name, email, phone.' },
+      { id: 'EM-7.3', name: 'Booking confirmation email (patient)', desc: 'Patient receives "Appointment Confirmed" email with date, time, type, and meeting link (if telemedicine).' },
+      { id: 'EM-7.4', name: 'Staff booking notification', desc: 'Staff receives "New Appointment" email. Service field shows the correct service name (not clinical notes).' },
+      { id: 'EM-7.5', name: 'Cancellation email (patient)', desc: 'When a patient cancels, they receive a cancellation confirmation email.' },
+      { id: 'EM-7.6', name: 'Cancellation email (staff)', desc: 'Staff receives a cancellation notification when a patient cancels.' },
+    ]
+  },
+  {
+    title: '8. Authentication & Password Recovery',
+    tests: [
+      { id: 'AU-8.1', name: 'Login page loads', desc: '/login renders with email and password fields.' },
+      { id: 'AU-8.2', name: 'Valid login redirects to dashboard', desc: 'Correct credentials redirect to /dashboard (admin/doctor) or /dashboard/my-appointments (patient).' },
+      { id: 'AU-8.3', name: 'Invalid login shows error', desc: 'Wrong password shows an inline error message. No crash.' },
+      { id: 'AU-8.4', name: 'Password reset email sent', desc: 'Clicking "Forgot Password" and submitting email sends a reset email with 8-digit OTP code.' },
+      { id: 'AU-8.5', name: 'OTP verification works', desc: 'Entering the correct 8-digit code + new password successfully resets the password.' },
+      { id: 'AU-8.6', name: 'Suspended doctor blocked', desc: 'A deactivated doctor is signed out and redirected to /login?error=suspended.' },
+    ]
+  },
+  {
+    title: '9. Dashboard — Admin / Receptionist View',
+    tests: [
+      { id: 'DA-9.1', name: 'Stats cards display', desc: 'Total Appointments, Virtual Consultations, and Total Revenue cards render with correct data.' },
+      { id: 'DA-9.2', name: 'Appointment table populates', desc: 'Receptionist Live Queue table shows all appointments with patient name, type, date, doctor, status.' },
+      { id: 'DA-9.3', name: 'Assign Doctor modal', desc: 'Clicking the stethoscope icon opens a modal listing available doctors. Selecting one assigns them.' },
+      { id: 'DA-9.4', name: 'Patient Details side panel', desc: 'Clicking the arrow icon opens a slide-out panel with patient info, appointment details, and clinical notes.' },
+      { id: 'DA-9.5', name: 'Mark as Completed', desc: 'Clicking "Mark as Completed" updates appointment status to "completed" and refreshes the table.' },
+      { id: 'DA-9.6', name: 'Cancel Appointment', desc: 'Clicking "Cancel Appointment" updates status to "cancelled" and refreshes.' },
+      { id: 'DA-9.7', name: 'View All link', desc: '"View All" button navigates to /dashboard/appointments.' },
+    ]
+  },
+  {
+    title: '10. Dashboard — Patient View (My Appointments)',
+    tests: [
+      { id: 'DP-10.1', name: 'Patient redirected correctly', desc: 'Patients logging in are redirected from /dashboard to /dashboard/my-appointments.' },
+      { id: 'DP-10.2', name: 'Appointment cards display', desc: 'Patient sees their booked appointments as glassmorphism cards with correct details.' },
+      { id: 'DP-10.3', name: 'Tab switcher works', desc: 'Upcoming / Past tabs filter appointments correctly.' },
+      { id: 'DP-10.4', name: 'Cancel appointment', desc: 'Patient can cancel a future appointment. Cancellation emails are dispatched.' },
+      { id: 'DP-10.5', name: 'Book Appointment button', desc: '"Book Appointment" button navigates to /book.' },
+      { id: 'DP-10.6', name: 'Join Virtual Clinic link', desc: 'For confirmed telemedicine appointments, a "Join Virtual Clinic" button appears with the meeting link.' },
+    ]
+  },
+  {
+    title: '11. Dashboard — Doctor View',
+    tests: [
+      { id: 'DD-11.1', name: 'Doctor sees own schedule only', desc: 'Doctor dashboard shows "My Clinical Schedule" with only their assigned appointments.' },
+      { id: 'DD-11.2', name: 'Join Virtual Clinic button', desc: 'Telemedicine appointments show a "Join Meeting" button linking to the video call.' },
+      { id: 'DD-11.3', name: 'Clinical notes editable', desc: 'Doctor can enter/edit clinical notes in the side panel textarea and save.' },
+      { id: 'DD-11.4', name: 'Patient history loadable', desc: '"Load Past Consultations" retrieves the patient medical history by email.' },
+    ]
+  },
+  {
+    title: '12. Admin — Doctor & Patient Management',
+    tests: [
+      { id: 'AM-12.1', name: 'Doctor directory loads', desc: '/dashboard/doctors displays all registered doctors with their details.' },
+      { id: 'AM-12.2', name: 'Add new doctor', desc: 'Admin can add a doctor with name, email, specialty. Doctor receives a welcome email with temp password.' },
+      { id: 'AM-12.3', name: 'Deactivate / remove doctor', desc: 'Admin can deactivate a doctor (soft delete). The doctor is blocked from logging in.' },
+      { id: 'AM-12.4', name: 'Doctor sessions planner', desc: '/dashboard/doctor-sessions shows the weekly availability planner.' },
+      { id: 'AM-12.5', name: 'Patient directory loads', desc: '/dashboard/patients shows grouped patient records derived from appointment history.' },
+      { id: 'AM-12.6', name: 'Delete patient', desc: 'Admin can delete a patient (appointments + profile + auth user cascade).' },
+    ]
+  },
+  {
+    title: '13. Static Pages & Navigation',
+    tests: [
+      { id: 'SP-13.1', name: 'Homepage loads', desc: '/ renders without errors.' },
+      { id: 'SP-13.2', name: 'Services page loads', desc: '/services renders the services directory.' },
+      { id: 'SP-13.3', name: 'About page loads', desc: '/about renders without errors.' },
+      { id: 'SP-13.4', name: 'Contact page loads', desc: '/contact renders without errors.' },
+      { id: 'SP-13.5', name: 'Leadership page loads', desc: '/leadership renders without errors.' },
+      { id: 'SP-13.6', name: 'Insights page loads', desc: '/insights renders the blog/articles index.' },
+      { id: 'SP-13.7', name: 'Navigation links work', desc: 'All header/footer navigation links route correctly without 404s.' },
+    ]
+  },
+  {
+    title: '14. Build & Deployment Readiness',
+    tests: [
+      { id: 'BD-14.1', name: 'TypeScript — zero errors', desc: 'npx tsc --noEmit passes with 0 errors.' },
+      { id: 'BD-14.2', name: 'Production build — zero errors', desc: 'npm run build compiles all 35 routes successfully.' },
+      { id: 'BD-14.3', name: 'No console errors on page load', desc: 'Opening the app in Chrome DevTools Console shows no red errors on initial load.' },
+      { id: 'BD-14.4', name: '.env.local variables present', desc: 'RESEND_API_KEY, PAYSTACK keys, SUPABASE keys, CRON_SECRET, STAFF_NOTIFICATION_EMAILS all set.' },
+      { id: 'BD-14.5', name: 'Dev server starts cleanly', desc: 'npm run dev starts without warnings or port conflicts.' },
+    ]
+  }
+];
+
+// ── State ────────────────────────────────
+let state = {};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state = JSON.parse(saved);
+  } catch(e) { state = {}; }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Render ───────────────────────────────
+function render() {
+  const container = document.getElementById('testContainer');
+  container.innerHTML = '';
+
+  sections.forEach((section, si) => {
+    const div = document.createElement('div');
+    div.className = 'section';
+
+    const sectionPassCount = section.tests.filter(t => (state[t.id]?.status) === 'pass').length;
+    const sectionTotal = section.tests.length;
+
+    div.innerHTML = `
+      <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="section-title">${section.title}</span>
+        <span class="section-count">${sectionPassCount}/${sectionTotal}</span>
+      </div>
+      <div class="section-body">
+        ${section.tests.map(t => {
+          const s = state[t.id] || {};
+          const statusClass = s.status ? `status-${s.status}` : '';
+          const selClass = s.status ? `sel-${s.status}` : '';
+          return `
+            <div class="test-row ${statusClass}" id="row-${t.id}">
+              <div class="test-info">
+                <span class="test-id">${t.id}</span>
+                <span class="test-name">${t.name}</span>
+                <span class="test-desc">${t.desc}</span>
+              </div>
+              <div class="test-status">
+                <select class="${selClass}" onchange="setStatus('${t.id}', this.value)" data-id="${t.id}">
+                  <option value="" ${!s.status ? 'selected' : ''}>Untested</option>
+                  <option value="pass" ${s.status === 'pass' ? 'selected' : ''}>✓ Pass</option>
+                  <option value="fail" ${s.status === 'fail' ? 'selected' : ''}>✗ Fail</option>
+                  <option value="skip" ${s.status === 'skip' ? 'selected' : ''}>⊘ Skip</option>
+                </select>
+              </div>
+              <div class="test-notes">
+                <input type="text" placeholder="Notes..." value="${s.notes || ''}" onchange="setNotes('${t.id}', this.value)" />
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateStats();
+}
+
+function setStatus(id, val) {
+  if (!state[id]) state[id] = {};
+  state[id].status = val || undefined;
+  saveState();
+  render();
+  if (val === 'pass') showToast(`✓ ${id} passed`);
+  if (val === 'fail') showToast(`✗ ${id} failed — add notes`);
+}
+
+function setNotes(id, val) {
+  if (!state[id]) state[id] = {};
+  state[id].notes = val;
+  saveState();
+}
+
+function updateStats() {
+  const all = sections.flatMap(s => s.tests);
+  const total = all.length;
+  const passed = all.filter(t => state[t.id]?.status === 'pass').length;
+  const failed = all.filter(t => state[t.id]?.status === 'fail').length;
+  const remaining = total - passed - failed - all.filter(t => state[t.id]?.status === 'skip').length;
+
+  document.getElementById('statPass').textContent = `✓ ${passed} Passed`;
+  document.getElementById('statFail').textContent = `✗ ${failed} Failed`;
+  document.getElementById('statRemaining').textContent = `○ ${remaining} Remaining`;
+  document.getElementById('progressFill').style.width = `${(passed / total) * 100}%`;
+}
+
+function resetAll() {
+  if (!confirm('Reset all test results? This cannot be undone.')) return;
+  state = {};
+  saveState();
+  render();
+  showToast('All results cleared');
+}
+
+function exportCSV() {
+  const rows = [['ID', 'Section', 'Test', 'Status', 'Notes']];
+  sections.forEach(section => {
+    section.tests.forEach(t => {
+      const s = state[t.id] || {};
+      rows.push([t.id, section.title, t.name, s.status || 'untested', s.notes || '']);
+    });
+  });
+  const csv = rows.map(r => r.map(c => `"${(c+'').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `mhc_verification_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSV exported');
+}
+
+// ── Init ─────────────────────────────────
+loadState();
+render();
+</script>
+
+</body>
+</html>

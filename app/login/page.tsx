@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getSupabaseBrowserClient } from "@/app/lib/supabase";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
@@ -17,6 +17,15 @@ export default function LoginPage() {
   
   const router = useRouter();
   const supabase = getSupabaseBrowserClient();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("error") === "suspended") {
+        setError("Your account has been suspended. Please contact the administrator.");
+      }
+    }
+  }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();

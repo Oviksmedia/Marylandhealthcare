@@ -300,21 +300,14 @@ export default function AppointmentsPage() {
                         )}
                       </td>
                       <td>
-                        {isCompleted && (
-                          <span className={styles.statusCompleted}>
-                            <CheckCircle2 size={12} />
-                            Completed
-                          </span>
-                        )}
-                        {isCancelled && (
-                          <span className={styles.statusCancelled}>
-                            <XCircle size={12} />
-                            Cancelled
-                          </span>
-                        )}
-                        {!isCompleted && !isCancelled && (
-                          <span className={styles.statusConfirmed}>Confirmed</span>
-                        )}
+                        <span className={
+                          apt.status === 'confirmed' ? styles.statusConfirmed :
+                          apt.status === 'completed' ? styles.statusCompleted :
+                          apt.status === 'cancelled' ? styles.statusCancelled :
+                          styles.statusPending
+                        }>
+                          {apt.status ? apt.status.charAt(0).toUpperCase() + apt.status.slice(1) : 'Pending'}
+                        </span>
                       </td>
                       <td>
                         <strong className={styles.amount}>NGN {getAppointmentAmount(apt).toLocaleString()}</strong>
@@ -398,9 +391,16 @@ export default function AppointmentsPage() {
                   </div>
                   <div>
                     <span>Status</span>
-                    <strong style={{ textTransform: 'capitalize' }}>
-                      {selectedAptDetails?.status || 'Confirmed'}
-                    </strong>
+                    <div>
+                      <span className={
+                        selectedAptDetails?.status === 'confirmed' ? styles.statusConfirmed :
+                        selectedAptDetails?.status === 'completed' ? styles.statusCompleted :
+                        selectedAptDetails?.status === 'cancelled' ? styles.statusCancelled :
+                        styles.statusPending
+                      }>
+                        {selectedAptDetails?.status ? selectedAptDetails.status.charAt(0).toUpperCase() + selectedAptDetails.status.slice(1) : 'Pending'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -432,10 +432,10 @@ export default function AppointmentsPage() {
 
               {selectedAptDetails?.meet_link && (
                 <div className={styles.detailSection}>
-                  <label>VIRTUAL CONSULTATION ROOM</label>
+                  <label>VIRTUAL CONSULTATION</label>
                   <a href={selectedAptDetails.meet_link} target="_blank" rel="noopener noreferrer" className={styles.panelLink}>
                     <Video size={16} />
-                    Enter Meeting Room
+                    Join Virtual Clinic
                   </a>
                 </div>
               )}

@@ -195,6 +195,93 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* Step 1A — Modality hint text */
+.step1Hint {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Modality meta tag inside the card */
+.modalityMeta {
+  display: inline-flex !important;
+  align-items: center;
+  background: oklch(0.40 0.13 193 / 0.07);
+  border-radius: 100px;
+  color: var(--primary) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: 1rem !important;
+  padding: 0.3rem 0.75rem;
+}
+
+/* Step 1B — Modality context chip (breadcrumb) */
+.modalityChip {
+  align-items: center;
+  background: oklch(0.40 0.13 193 / 0.06);
+  border: 1px solid oklch(0.40 0.13 193 / 0.14);
+  border-radius: 100px;
+  color: var(--primary);
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  padding: 0.45rem 0.45rem 0.45rem 0.85rem;
+  width: fit-content;
+}
+
+.modalityChipChange {
+  background: var(--primary);
+  border: 0;
+  border-radius: 100px;
+  color: var(--text-inverse);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  transition: background 0.2s var(--ease-premium);
+}
+
+.modalityChipChange:hover {
+  background: var(--primary-hover);
+}
+
+/* Service card icon wrapper — consistent sizing */
+.serviceCardIconWrap {
+  align-items: center;
+  background: var(--primary-light);
+  border-radius: 12px;
+  color: var(--primary);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 2.75rem;
+  justify-content: center;
+  transition: background 0.2s var(--ease-premium), color 0.2s;
+  width: 2.75rem;
+}
+
+.selectedService .serviceCardIconWrap {
+  background: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: 0 4px 12px -4px oklch(0.40 0.13 193 / 0.35);
+}
+
+.selectedService .serviceCardIconWrap svg {
+  color: var(--text-inverse) !important;
+}
+
+/* Selected service checkmark badge */
+.serviceSelectedCheck {
+  align-items: center;
+  color: var(--primary);
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .serviceCard {
   align-items: center;
   display: flex;
@@ -227,10 +314,16 @@
 }
 
 .selectedService {
-  background: white;
+  background: linear-gradient(135deg, #ffffff 0%, oklch(0.40 0.13 193 / 0.02) 100%);
   border-color: var(--primary);
-  box-shadow: 0 12px 28px -10px oklch(0.40 0.13 193 / 0.25), 0 0 0 1px var(--primary);
+  box-shadow: 
+    0 16px 32px -12px oklch(0.40 0.13 193 / 0.22),
+    0 0 0 1px var(--primary);
   transform: translateY(-2px);
+}
+
+.selectedService em {
+  color: oklch(0.12 0.01 220 / 0.75) !important;
 }
 
 .dateTimeGrid,
@@ -351,6 +444,123 @@
   display: grid;
   gap: 1.5rem;
 }
+
+.noSlotsNotice {
+  background: var(--glass-bg-elevated);
+  border: 1.5px solid oklch(0.40 0.13 193 / 0.1);
+  border-radius: 16px;
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+}
+
+.noSlotsNotice h3 {
+  font-family: var(--font-serif);
+  color: var(--primary);
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+.noSlotsNotice p {
+  color: var(--text-muted);
+  font-size: 0.925rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.noSlotsMuted {
+  font-size: 0.85rem !important;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.inClinicDateConfirmed {
+  background: var(--glass-bg-elevated);
+  border: 1.5px solid oklch(0.40 0.13 193 / 0.12);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+  animation: fadeIn 0.4s var(--ease-premium);
+}
+
+.inClinicCheckIcon {
+  color: var(--primary);
+  background: oklch(0.40 0.13 193 / 0.08);
+  padding: 8px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.inClinicDateConfirmed h3 {
+  font-family: var(--font-serif);
+  color: var(--primary);
+  font-size: 1.65rem;
+  margin: 0;
+}
+
+.inClinicDateConfirmed p {
+  color: var(--text-main);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.inClinicInfoBox {
+  background: rgba(15, 76, 92, 0.04);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.inClinicInfoBox strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}
+
+.inClinicInfoBox p {
+  font-size: 0.875rem !important;
+  color: var(--text-muted) !important;
+  line-height: 1.5 !important;
+}
+
+.inClinicFormIntro {
+  grid-column: 1 / -1;
+  margin-bottom: 1rem;
+  border-bottom: 1.5px solid oklch(0.40 0.13 193 / 0.1);
+  padding-bottom: 1rem;
+}
+
+.inClinicFormIntro h3 {
+  font-family: var(--font-serif);
+  color: var(--primary);
+  font-size: 1.65rem;
+  margin: 0 0 0.4rem 0;
+}
+
+.inClinicFormIntro p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
 
 .timeHeader {
   align-items: center;
@@ -505,7 +715,7 @@
   color: var(--primary);
 }
 
-.paymentCard div {
+.paymentRow {
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -818,6 +1028,20 @@
 /* Password Input Wrapper */
 .passwordWrapper {
   position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordWrapper input {
+  padding-left: 2.85rem !important;
+  padding-right: 3rem !important;
+  width: 100%;
+}
+
+.passwordWrapper:focus-within .inputIcon {
+  opacity: 0.95;
+  color: var(--primary-bright);
 }
 
 .passwordToggle {
@@ -1421,5 +1645,546 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.inputLabelWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputWrapper input {
+  padding-left: 2.85rem !important;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1.15rem;
+  color: var(--primary);
+  opacity: 0.45;
+  pointer-events: none;
+  transition: all 0.3s var(--ease-premium);
+}
+
+.inputWrapper:focus-within .inputIcon {
+  opacity: 0.95;
+  color: var(--primary-bright);
+}
+
+.textareaWrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.textareaWrapper textarea {
+  padding-left: 2.85rem !important;
+  width: 100%;
+}
+
+.textareaIcon {
+  position: absolute;
+  left: 1.15rem;
+  top: 1rem;
+  color: var(--primary);
+  opacity: 0.45;
+  pointer-events: none;
+  transition: all 0.3s var(--ease-premium);
+}
+
+.textareaWrapper:focus-within .textareaIcon {
+  opacity: 0.95;
+  color: var(--primary-bright);
+}
+
+.passwordHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  width: 100%;
+}
+
+.strengthLabel {
+  font-size: 0.75rem !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s var(--ease-premium);
+}
+
+.strengthWeak {
+  color: var(--feedback-error) !important;
+}
+
+.strengthMedium {
+  color: var(--feedback-warning) !important;
+}
+
+.strengthStrong {
+  color: var(--feedback-success) !important;
+}
+
+/* Adjustments to existings for perfect alignment */
+.profileCard {
+  box-shadow: 
+    0 10px 30px -10px oklch(0.12 0.01 220 / 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  border: 1px solid oklch(0.40 0.13 193 / 0.15);
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(12px);
+  padding: 1.5rem !important;
+  border-radius: 20px !important;
+}
+
+.profileCardIcon {
+  color: var(--feedback-success) !important;
+  background: oklch(0.55 0.15 155 / 0.1);
+  padding: 0.6rem;
+  border-radius: 12px;
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+}
+
+.profileCardInfo h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.1rem !important;
+}
+
+.followUpCard {
+  border-radius: 20px !important;
+  padding: 1.5rem !important;
+  border: 1px solid transparent !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px -10px oklch(0.12 0.01 220 / 0.05);
+}
+
+.followUpCard.eligible {
+  border: 1.5px solid oklch(0.55 0.15 155 / 0.3) !important;
+  background: linear-gradient(135deg, oklch(0.55 0.15 155 / 0.02) 0%, oklch(0.55 0.15 155 / 0.06) 100%) !important;
+}
+
+.followUpCard.notEligible {
+  border: 1.5px solid oklch(0.55 0.20 25 / 0.2) !important;
+  background: linear-gradient(135deg, oklch(0.55 0.20 25 / 0.02) 0%, oklch(0.55 0.20 25 / 0.06) 100%) !important;
+}
+
+.followUpEligible {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: oklch(0.35 0.10 155) !important;
+}
+
+.followUpEligible strong {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+}
+
+.followUpEligible span {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.85;
+}
+
+.followUpNotEligible {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: oklch(0.40 0.12 25) !important;
+}
+
+.followUpNotEligible strong {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+}
+
+.followUpNotEligible span {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.85;
+}
+
+/* Step 4 Review Page Overhauls */
+.reviewHeading {
+  color: var(--primary);
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  margin-bottom: 2rem !important;
+}
+
+.reviewBrief {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.40 0.13 193 / 0.08);
+  border-radius: 24px;
+  padding: 2.25rem;
+  box-shadow: 
+    0 20px 40px -15px oklch(0.12 0.01 220 / 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.reviewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.reviewSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-bottom: 1.5px solid oklch(0.40 0.13 193 / 0.06);
+  padding-bottom: 0.75rem;
+  color: var(--primary);
+}
+
+.reviewSectionIcon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.reviewSectionHeader h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 2rem;
+}
+
+.reviewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.reviewLabel {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.reviewVal {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.reviewValDark {
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.reviewReasonQuote {
+  margin: 0.4rem 0 0 0;
+  padding: 1rem 1.25rem;
+  background: oklch(0.40 0.13 193 / 0.04);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 12px 12px 0;
+  color: var(--text-main);
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STEP 5 — CONFIRMATION CARD (Single Elevated Card)
+   ═══════════════════════════════════════════════════════════ */
+
+.confirmationPage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding: 1rem 0 3rem;
+}
+
+.confirmationCard {
+  background: white;
+  border: 1px solid oklch(0.40 0.13 193 / 0.08);
+  border-radius: 24px;
+  box-shadow:
+    0 1px 2px oklch(0.12 0.01 220 / 0.03),
+    0 4px 16px oklch(0.12 0.01 220 / 0.04),
+    0 20px 60px -20px oklch(0.12 0.01 220 / 0.08);
+  max-width: 520px;
+  width: 100%;
+  padding: 2.5rem 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Card Header ─────────────────────────────────────────── */
+
+.confirmationCardHeader {
+  text-align: center;
+  padding-bottom: 1.5rem;
+}
+
+.confirmationCheckmark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: oklch(0.55 0.15 155 / 0.08);
+  color: oklch(0.45 0.15 155);
+  margin-bottom: 1.25rem;
+}
+
+.confirmationHeading {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.confirmationSubtext {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.confirmationSubtext strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+
+.confirmationDivider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.40 0.13 193 / 0.15) 20%,
+    oklch(0.40 0.13 193 / 0.15) 80%,
+    transparent 100%
+  );
+  margin-bottom: 1.5rem;
+}
+
+/* ── Details Grid (receipt-style) ────────────────────────── */
+
+.confirmationDetailsGrid {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  background: oklch(0.98 0.005 85 / 0.7);
+  border: 1px solid oklch(0.40 0.13 193 / 0.06);
+  border-radius: 14px;
+  padding: 1.25rem 0;
+}
+
+.confirmationDetailItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 1rem;
+}
+
+.confirmationDetailSep {
+  width: 1px;
+  background: oklch(0.40 0.13 193 / 0.1);
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+.confirmationDetailLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.confirmationDetailValue {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-serif);
+  text-align: center;
+}
+
+/* ── Advisory Inset ──────────────────────────────────────── */
+
+.confirmationAdvisory {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: oklch(0.40 0.13 193 / 0.04);
+  border: 1px solid oklch(0.40 0.13 193 / 0.10);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.confirmationAdvisory > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.confirmationAdvisory strong {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.confirmationAdvisory p {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.confirmationAdvisory p strong {
+  display: inline;
+  color: var(--text-main);
+  font-size: inherit;
+}
+
+/* ── Emergency Warning Strip ─────────────────────────────── */
+
+.confirmationWarningStrip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: oklch(0.58 0.17 30 / 0.06);
+  border: 1px solid oklch(0.58 0.17 30 / 0.12);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.confirmationWarningStrip > svg {
+  color: oklch(0.55 0.17 40);
+  flex-shrink: 0;
+}
+
+.confirmationWarningStrip span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: oklch(0.42 0.10 30);
+  line-height: 1.4;
+}
+
+.confirmationWarningStrip strong {
+  font-weight: 700;
+  color: oklch(0.38 0.14 30);
+}
+
+/* ── Action Buttons ──────────────────────────────────────── */
+
+.confirmationActions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.confirmationBtnPrimary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: var(--text-inverse);
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  box-shadow: 0 6px 20px -8px oklch(0.40 0.13 193 / 0.35);
+  transition: all 0.25s var(--ease-premium);
+}
+
+.confirmationBtnPrimary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px -8px oklch(0.40 0.13 193 / 0.5);
+}
+
+.confirmationBtnOutline {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: all 0.25s var(--ease-premium);
+}
+
+.confirmationBtnOutline:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+@media (max-width: 560px) {
+  .confirmationCard {
+    padding: 2rem 1.5rem 1.5rem;
+    border-radius: 20px;
+  }
+
+  .confirmationDetailsGrid {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .confirmationDetailSep {
+    width: 80%;
+    height: 1px;
+    margin: 0.5rem auto;
+    align-self: center;
+  }
+
+  .confirmationActions {
+    flex-direction: column;
   }
 }

@@ -364,3 +364,430 @@
   - Completed type-checking with `npx tsc --noEmit` yielding 100% success.
   - Production Next.js Turbopack build compiled all pages and routes flawlessly with zero compilation errors.
 
+## 44. Booking Flow Step 3: Identity & Authentication UI Redesign
+- **Context:**
+  - In alignment with the visual and typography overhaul of the telemedicine booking flow, Step 3 (Identity & Authentication) required a modern, professional, and visually engaging design. The form cards and inputs were visually flat, lacking clear structure, responsive indicators, or intuitive guidance for new vs. returning patients.
+- **Resolution:**
+  - **Left-Aligned Input Icons:** Configured a high-fidelity wrapper pattern (`styles.inputWrapper`, `styles.textareaWrapper`) that absolute-positions descriptive Lucide icons (`UserRound`, `Phone`, `Mail`, `Lock`, `FileText`) on the left side of every text field, shifting input padding and animating opacity on focus-within states for a highly professional experience.
+  - **Glassmorphic Connected Profile Card:** Redesigned the returning patient profile connection interface into an elegant glass panel (`backdrop-filter: blur(12px)`) with rounded borders, a success-green light capsule wrapping a check icon, and a highly polished sign-out pill button.
+  - **Tactile Toggle Control:** Styled the segment buttons for new vs. returning patient toggles with active drop-shadowed capsules and Outfit font sizes.
+  - **Dynamic Password Strength HUD:** Redesigned the password strength indicator to feature a dynamic text label (Too Weak, Medium, Very Secure) that lights up and matches the responsive color-changing bars.
+  - **Diagnostic Summary Grid:** Polished the pricing summary column in step 3 to present clear cost lines and border alignments matching the review screens.
+- **Verification:**
+  - Verification compilation ran successfully: `npx tsc --noEmit` completed with zero warnings or errors.
+  - Verification build compiled successfully: Checked Next.js pages build, ensuring the added JSX elements and CSS classes prerendered cleanly.
+
+## 45. Booking Flow Step 4: Clinical Dossier & Cart Review UI Redesign
+- **Context:**
+  - The Step 4 "Review & Confirm" card in the Booking Wizard previously displayed a flat list of data points inside generic unstyled div boxes, creating an off-balance layout with poor visual contrast and weak hierarchy. It lacked the institutional gravity expected of a premium, established healthcare center.
+- **Resolution:**
+  - **Structured Clinical Sections:** Segregated the appointment data into two highly distinct, semantic panels: **Clinical Consultation** (specialty, modality, scheduled date, selected time slot) and **Patient Dossier** (full name, phone number, email address, optional reason for visit).
+  - **Dossier Heading Icons:** Wired brand primary Lucide icons (`Stethoscope`, `UserRound`) to the section headers, utilizing the Outfit/Playfair typographic hierarchy to separate layout blocks clearly.
+  - **Clinical Transcription Blockquote:** Styled the "Reason for Visit" value inside a professional blockquote element (`styles.reviewReasonQuote`) utilizing a faint oklch teal background, curved borders, and an authoritative primary teal left-hand vertical accent line.
+  - **Custom Review CSS Classes:** Developed highly customizable CSS grid classes (`.reviewBrief`, `.reviewSection`, `.reviewSectionHeader`, `.reviewGrid`, `.reviewItem`, `.reviewLabel`, `.reviewVal`, `.reviewValDark`) that display cost summaries and patient forms in a symmetric, 2-column grid.
+- **Verification:**
+  - Static analysis check ran successfully: `npx tsc --noEmit` completed with 100% clean stdout and zero errors.
+  - Verification build compiled successfully: Checked Next.js pages build, ensuring the added JSX elements and CSS classes prerendered cleanly.
+
+## 46. Booking Flow Step 5: High-Trust Success & Confirmation UI Redesign
+- **Context:**
+  - The previous Step 5 booking confirmation success panel was flat, sterile, and lacked clear patient guidance, rendering physical clinic arrivals or virtual telehealth entry paths ambiguous. The layout was basic and did not evoke the premium medical branding of Maryland Healthcare.
+- **Resolution:**
+  - **Pulsing Success Ring Animation:** Enclosed the `CheckCircle2` success icon in a relative wrapper (`styles.successBadgeContainer`) featuring an absolute-positioned pulsing glow ring (`styles.successPulseRing`) running on a smooth CSS keyframes transition.
+  - **Structured Invoice Receipt:** Polished the `confirmationReceipt` panel into a dynamic high-contrast clinical invoice card featuring dashes, dedicated Lucide `Receipt` header icons, and curved receipt tiles.
+  - **Dynamic Telehealth and Clinic Advisories:** Built distinct advisories for modalities: virtual consultations render a secure telehealth chamber card with an animated breathing icon, while in-clinic selections display an important clinic arrival instructions card.
+  - **Urgent Emergency Hotline Pill:** Replaced the plain disclaimer paragraph with an emergency disclaimer badge (`styles.emergencyDisclaimerBadge`) styled as a prominent crimson hot-line advisory pill.
+  - **Dual Navigation CTAs:** Replaced the single homepage redirect with custom dual buttons: "Access Patient Portal" (routing to `/dashboard/my-appointments`) and "Return to Homepage" (routing to `/`), complete with hover scale translations.
+- **Verification:**
+  - Static analysis check ran successfully: `npx tsc --noEmit` completed with 0 warnings or compiler errors.
+  - Next.js production build succeeded with zero prerendering or hydration issues.
+
+## 47. Doctor & Staff Overview Dashboard UI Redesign
+- **Context:**
+  - The Doctor/Staff main overview dashboard (`app/dashboard/page.tsx`, `overview.module.css`) previously had flat, sterile cards, generic tables, and a simple detail panel. It did not reflect the premium glassmorphic visual language implemented across other portals.
+- **Resolution:**
+  - **Glassmorphic Stat Cards:** Replaced boring cards with rich, translucent glass panels (`var(--glass-bg-elevated)`) styled with thin active oklch borders, subtle shadows (`0 10px 30px -15px rgba(0,0,0,0.04)`), and custom top border gradients. Added smooth hover translations (`translateY(-4px)`) and scaling icons (`scale(1.08) rotate(4deg)`).
+  - **Live Queue Table Overhaul:** Designed sleek, padded tables with lightweight oklch backgrounds for headers and rows. Built glowing, breathing video call join capsules featuring an interactive pulsing keyframes animation.
+  - **Slide-Out Details Panel:** Overhead the patient details side panel with immersive backdrop blurs (`backdrop-filter: blur(24px)`), translucent white layers, textured consultation textareas, and italicized clinical transcription blockquotes.
+  - **Sleek Autohide Toasts:** Overhauled status toasts to float elegantly with a soft, breathing oklch background and dynamic slide-down entry keyframes.
+
+## 48. Appointments Archive & Filter View UI Redesign
+- **Context:**
+  - The Doctor/Staff full appointments list (`app/dashboard/appointments/page.tsx`, `appointments.module.css`) used basic inputs and simple tables that felt disjointed from the main platform.
+- **Resolution:**
+  - **Translucent Filters Panel:** Wrapped the date, modality, status, and patient search inputs in a unified glassmorphic container with rounded borders and responsive margins.
+  - **Unified Table & Detail Panels:** Re-applied the identical glassmorphic layout, row hovers, status pills, table actions, details side panel, and toast systems to ensure character-for-character consistency between the main overview and archived slots.
+- **Verification:**
+  - Static analysis check ran successfully: `npx tsc --noEmit` completed with 0 warnings or compiler errors.
+  - Next.js production build `npm run build` compiled 100% successfully in Turbopack with zero warnings, page hydration errors, or styling conflicts.
+
+## 49. Patient Retry Payment Flow and Hoisting Fix
+- **Context:**
+  - Virtual consultations booked by patients that did not have payments completed were shown as `pending` in the patient profile, but there was no way for patients to retry the payment from the appointments dashboard.
+- **Resolution:**
+  - **Payment Retry Action:** Updated [my-appointments/page.tsx](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/my-appointments/page.tsx) to integrate the `usePaystackPayment` hook and render a dynamic "Pay Consultation Fee" checkout trigger button on unpaid virtual consultations.
+  - **Success Handling:** Upon successful payment verification, the component calls the `confirmBooking` server action, transitioning the status to `'confirmed'`, setting payment status to `'paid'`, generating a Jitsi video meet link, dispatching email confirmations, and rendering a custom inline success banner.
+  - **CSS Styling:** Added the corresponding `.payBtn`, `.unpaidBadge`, and `.successBanner` style classes inside [my-appointments.module.css](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/my-appointments/my-appointments.module.css) matching the Outfit typography and oklch design tokens.
+  - **TypeScript Hoisting Resolution:** Relocated the `loadAppointments` and `supabase` definitions above the `useEffect` block in `page.tsx` to fix compile-time hoisting and block-scope initialization errors.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 50. Appointments Archive and Overview Status Rendering Discrepancy Fix
+- **Context:**
+  - On the receptionist Overview page, unpaid appointments correctly showed their database status as "Pending" (orange badge). However, on the Appointments Archive page, the same appointments incorrectly displayed as "Confirmed" (green badge) in both the table listing and the details drawer side panel.
+- **Resolution:**
+  - **Appointments Archive Table:** Refactored [appointments/page.tsx](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/appointments/page.tsx) to dynamically read the actual database status `apt.status` and assign the correct styling class (such as `styles.statusPending` or `styles.statusConfirmed`), resolving the hardcoded fallback that was masking pending slots as confirmed.
+  - **Appointments Archive Drawer:** Replaced the hardcoded Status label element in the drawer side-panel with the dynamic status badge helper class logic.
+  - **Receptionist Overview Drawer:** Corrected the hardcoded Status label inside [page.tsx](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/page.tsx) details drawer to dynamically render the corresponding status badges.
+  - **Styling updates:** Added `.statusPending` style class configuration directly into [appointments.module.css](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/appointments/appointments.module.css) matching the amber/orange HSL/oklch theme layout.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 51. Past-Due Pending Appointments Autocancel Integration
+- **Context:**
+  - Pending appointments that were never finalized (e.g. abandoned booking/payment flow) remained in the queue as "Pending" even after their scheduled date and time had passed.
+- **Resolution:**
+  - **Cleanup Cron Route Integration:** Modified [route.ts](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/api/cron/cleanup/route.ts) to query all appointments in the database that are in a `'pending'` status with a `scheduled_at` timestamp in the past (`scheduled_at < now`).
+  - **State Transition:** Automatically updates the status of these past-due records to `'cancelled'`. This preserves database slot cleanup auditing without physically deleting slots that have actually passed the appointment date window.
+- **Verification:**
+  - Checked compilation with `npx tsc --noEmit` and successfully ran `npx next build` with 100% success.
+
+## 52. Doctor-Driven Availability & Specialty Booking (Phase 6)
+- **Context:**
+  - Needed to migrate from static booking grids to dynamic slot checking linked to active doctor schedules, ensuring slots are only bookable if an attending doctor of that specialty is free.
+- **Resolution:**
+  - **Dynamic Schedule Check:** Refactored `getBookedSlots(date, specialty)` to query active doctors of the specialty and check slots against their weekly `availability` JSONB config and active bookings. Returns slot as booked if no matching doctor is free.
+  - **Dynamic Auto-Assignment:** Configured `createPendingBooking` and `submitBooking` server actions in `booking.ts` to call `findFreeDoctorForSlot` and automatically assign the first free doctor to `doctor_id` in the database, preventing race conditions.
+  - **Doctor Settings Week Planner:** Added an interactive, mobile-responsive Weekly Availability Planner card to the settings panel (`app/dashboard/settings/page.tsx`, `settings.module.css`). Logged-in doctors can toggle 30-min slots for each weekday and persist them to the database.
+  - **A11y & Wizard Fallbacks:** Configured `BookingWizard.tsx` to pass the chosen specialty and render a glassmorphic notice if all slots are full or no doctors exist.
+- **Verification:**
+  - Static compiler checks (`npx tsc --noEmit`) and Turbopack Next.js production builds (`npx next build`) completed with 100% success and zero errors or warnings.
+
+## 53. Doctor Onboarding Credentials & Admin Availability Editor (Phase 7)
+- **Context:**
+  - When new doctors were registered by admins, they did not receive their login portal links or temporary passwords. Additionally, admins lacked a dashboard interface to set or modify availability calendars for attending doctors.
+- **Resolution:**
+  - **Credential Onboarding Emails:** Added `sendDoctorWelcomeEmail` to `app/lib/telemedicine/email.ts` to dispatch credentials via Resend. Triggered this welcome mail in `addDoctorWithAuth` (`app/dashboard/doctors/actions.ts`) immediately following successful registration.
+  - **Admin Availability Actions:** Created `updateDoctorAvailability` in `app/dashboard/doctors/actions.ts` to verify admin privileges and update the target doctor's `availability` JSONB column using `supabaseAdmin`.
+  - **Admin Availability Planner Modal:** Added a "Set Availability" option to the doctor directory actions dropdown in `app/dashboard/doctors/page.tsx`. Built a glassmorphic modal containing day tabs (Monday–Friday) and timeslot toggle buttons that mirrors the doctor settings layout, utilizing dedicated helper styles in `doctors.module.css`.
+- **Verification:**
+  - Ran static compilation check `npx tsc --noEmit` yielding zero warnings or errors.
+  - Completed production build check `npx next build` with 100% success across all routes.
+
+## 54. Admin Doctor Sessions & Scheduler Week Planner (Phase 8)
+- **Context:**
+  - Configuring availability by checking individual timeslot chips was inefficient. Admins needed a shift-based session planner (as shown in image mockups) to define doctor shift hours, break times, and slot durations.
+- **Resolution:**
+  - **Sessions Config Schema:** Created migration `015_add_sessions_config.sql` adding a `sessions_config` JSONB column to the `profiles` table to store shift structures.
+  - **Slot Compiler Helper:** Built `compileSessionsToSlots` inside `app/dashboard/doctor-sessions/actions.ts` to parse shift start/end minutes, step by the slot duration, exclude intervals overlapping break definitions, format times to 12-hour strings (e.g. `"09:00 AM"`), and save them to `availability` to maintain backward-compatibility with the front-end Booking Wizard.
+  - **Admin Sessions Page:** Created `app/dashboard/doctor-sessions/page.tsx` and `sessions.module.css` with Outfit styling. Admins can select doctors, set durations, toggle work days, configure shift ranges, and set clinical breaks.
+  - **Doctor Settings Sync:** Integrated the exact same sessions grid planner into `app/dashboard/settings/page.tsx` and `settings.module.css` for doctors to configure their own hours, invoking `saveDoctorOwnSessions` server action.
+  - **Sidebar Navigation:** Added `Doctor Sessions` nav item (Lucide `Clock` icon) to the sidebar in `app/dashboard/layout.tsx` for admins, guarding the path from other roles.
+- **Verification:**
+  - Static type compilation check (`npx tsc --noEmit`) and Turbopack Next.js builds (`npx next build`) completed with 100% success across all 35 routes.
+
+## 28. Dynamic Session Duration Sync (Phase 9)
+- **Context:** Admin Doctor Sessions page allowed 15/30/45/60-minute slot durations, but the booking wizard and reschedule modal used hardcoded 30-minute morning/afternoon arrays. A 15-minute doctor config didn't reflect on the booking page.
+- **Decision:** Eliminated all hardcoded slot arrays. The server now reads each doctor's `availability` JSONB, unions all configured slots for the selected specialty and day, sorts chronologically, and returns them dynamically via `getDaySlots`.
+- **Resolution:**
+  - **`booking.ts`:** Added `getDaySlots(date, specialty)` → `{ allSlots: string[], bookedSlots: string[] }`. Relaxed scheduling boundary validation from 30-minute to 5-minute alignment. `getBookedSlots` preserved as backward-compat wrapper.
+  - **`BookingWizard.tsx`:** Replaced static `morningSlots`/`afternoonSlots` arrays with `allSlots` state. Effect now calls `getDaySlots`, splits AM/PM inline. Added `isLoadingSlots` loading state with spinner. Clears stale `timeSlot` when slots change.
+  - **`my-appointments/page.tsx`:** Same pattern. Reschedule modal fetches dynamic slots via `getDaySlots`, filters by appointment specialty.
+- **Pattern:** All slot labels (`"09:15 AM"`) are now truth-sourced from `profiles.availability` JSONB written by the sessions compiler. No hardcoded time arrays exist anywhere.
+- **Verification:** `npx tsc --noEmit` passes cleanly.
+
+## 56. Doctor Sessions System Audit Fixes (Phase 10)
+- **Context:**
+  - An audit of the Doctor Sessions System identified 14 findings including: schema file out of sync, code duplication (`getCallerProfile`), specialty mapping discrepancies, hard doctor deletes, drift in the two availability columns, missing server configuration validation, lack of TypeScript typings on the settings page, and hardcoded colors in sessions styling modules.
+- **Resolution:**
+  - **Root Cause:** RLS policies on the `profiles` table restrict patient roles to `SELECT` and `UPDATE` of their own rows; they do not have `INSERT` permissions. When the layout attempted to create a missing profile client-side using `supabase.from('profiles').insert(...)`, the insert failed due to permission denial.
+- **Resolution:**
+  - **Server-Side Insert on Signup:** Updated the server action `registerPatientUser` in `app/lib/telemedicine/booking.ts` to directly insert a row into the `profiles` table immediately after creating the Auth user. Since this runs on the server using `supabaseAdmin`, it successfully bypasses RLS constraints.
+  - **Server-Side Fallback Action:** Created a new server action `createProfileForUser` in `app/lib/telemedicine/booking.ts` which performs a secure service-role insert.
+  - **Dashboard Layout Update:** Modified `app/dashboard/layout.tsx` to call this new `createProfileForUser` server action as a self-healing fallback when a profile is missing, eliminating the RLS permission error entirely.
+- **Verification:**
+  - Run `npx tsc --noEmit` which completed synchronously with 100% clean output (0 errors).
+  - The patient profile is now created successfully during sign up, preventing any dashboard mount errors.
+
+
+
+## 41. Comprehensive Security & Reliability Hardening (System Audit Fixes)
+- **Context:**
+  - A security and operational audit of the system identified key vulnerabilities and reliability risks, including hardcoded telemedicine URLs, potential leak of service role keys to browser bundles, clinical record destruction on patient deletion, unhandled promise rejections on slot retrieval, XSS hazards in HTML emails, and missing pending booking cleanup TTL.
+- **Resolution:**
+  - **Private Service Key Leak Mitigation:** Segregated concerns by removing `supabaseAdmin` from the public `app/lib/supabase.ts` file (which is imported by browser components). Created a dedicated server-only `app/lib/supabaseAdmin.ts` client file protected by the `'server-only'` guard package. Updated all server-side actions, api routes, and cron jobs to import the admin client from this new secure entrypoint.
+  - **Telemedicine Room URL Wiring:** Wired the unique meet link generated by Jitsi virtual conferencing directly into the Step 5 confirmation screen in `BookingWizard.tsx` (`confirmedMeetLink` state), replacing the insecure hardcoded placeholder URL.
+  - **Clinical Record Preservation:** Refactored the `deletePatient` soft-deletion server action in `app/dashboard/actions.ts` to preserve completed patient visits. Split the query into two actions: one that cancels pending/confirmed appointments, and another that pseudonymizes all patient identifiers (email, phone, name) on completed/cancelled appointments while preserving their clinical records.
+  - **Failsafe Slot Retrieval & Error Catching:** Refactored `getBookedSlots` in `app/lib/telemedicine/booking.ts` to throw error details instead of silently returning an empty array on database failure. Integrated a robust `.catch()` block in `BookingWizard.tsx`'s retrieval handler to catch failures gracefully and prevent unhandled promise rejections in browsers.
+  - **TTL pending bookings cleanup cron route:** Created a new cron worker endpoint `/api/cron/cleanup/route.ts` secured with `CRON_SECRET` headers. It runs periodically to purge incomplete, abandoned `pending` status bookings older than 10 minutes, preventing malicious slot hoarding.
+  - **XSS Sanitization & email hardening:** Added an `escapeHtml` utility in `app/lib/telemedicine/email.ts` to sanitzie all patient-supplied fields interpolated into outgoing email notifications. Removed all hardcoded staff notification PII email fallbacks, resolving credential leak risks in version control.
+  - **Completed status validation:** Added a strict assertion in `confirmBooking` (`app/lib/telemedicine/booking.ts`) preventing confirmation of already completed clinical appointments.
+- **Verification:**
+  - Verified 100% clean type compilation with `npx tsc --noEmit` (0 errors).
+  - Executed full Next.js production build (`npx next build`) successfully with zero Turbopack or TypeScript failures.
+
+## 42. Database Constraints, Rate Limiting & Premium Accessible Wizard (Sprint 2 Audit Fixes)
+- **Context:**
+  - The remaining 20 findings in the system audit covered database-level constraint gaps, client-server pricing duplication, server action vulnerability to DDoS abuse, Paystack checkout reference mutations, accessibility (A11y/WCAG) gaps in the booking calendar/consent overlays, blocking browser-native alert popups, and deprecated packages.
+- **Resolution:**
+  - **Database Constraints & Indexes (Block 1):** Created numbered migrations `008` through `013` under `supabase/migrations/` and updated `supabase/schema.sql` to enforce telemedicine consent (`consent_agreed_at` NOT NULL for virtual visits), CHECK bounds on roles/types/statuses, autoupdating `updated_at` trigger functions on profiles/appointments, composite indexes for double-booking checks, and partial indexes on `profiles.deleted_at` and `appointments.paystack_ref` to avoid full-table scans.
+  - **Server-Side Sliding Window Rate Limiting (Block 2):** Developed IP-based rate-limiting middleware in `app/lib/rateLimit.ts` using memory caches. Protected sensitive booking server actions (`createPendingBooking`, `confirmBooking`, `registerPatientUser`) with request limits.
+  - **Pricing Deduplication (Block 2):** Abstracted all consultation fee parameters into a non-server shared `pricing.ts` module, providing a single source of truth for both server action algorithms and client-side selection cards.
+  - **Stable Paystack Checkout Reference (Block 3):** Replaced the step-dependent reference memo with a stable state hook initialized *once* on Step 4 cart mount, preventing reference regenerations when users customize details.
+  - **Eliminated Native Browser Alerts (Block 3):** Substituted all browser-blocking native `alert()` calls with a premium theme-aligned glassmorphic inline warning card container to display errors dynamically.
+  - **Accessibility Focus Trap & Dialog Roles (Block 3):** Added `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` referencing modal headers inside the Telemedicine clinical consent modal. Built a custom keydown listener Focus Trap utilizing React `useRef` to lock keyboard navigations inside consent boundaries and capture `Escape` triggers natively.
+  - **A11y Labels & States (Block 3):** Added screen-reader descriptive weekday labels in week grids, injected active-state ARIA indicators (`aria-pressed`) on modalities and specialty cards, set progress bar properties on step tracking trackers, and added explicit `aria-label` fields on password eye icon buttons.
+  - **Cleaned Lock Dependencies (Block 4):** Completely removed the deprecated `@supabase/auth-helpers-nextjs` dependency from `package.json` to prevent library overlap.
+- **Verification:**
+  - Verified 100% successful static compilation checking with `npx tsc --noEmit` yielding zero warnings.
+  - Production bundler `npx next build` compiled, prerendered, and compiled all 34 static/dynamic routes seamlessly with zero Turbopack or TypeScript errors.
+
+## 43. E2E Verification & Final Dashboard Data Integrity Fixes (BUG 1 & BUG 2)
+- **Context:**
+  - An E2E verification of the booking flow identified two remaining dashboard-level issues:
+    1. **BUG 1 (Medium):** The dashboard side panel details drawer showed "No description provided." because it queried `selectedAptDetails?.description`, but the column `description` does not exist in the appointments table (clinical notes are stored in `notes` and aliased to `clinical_notes`).
+    2. **BUG 2 (Low):** The layout's auto-link profile mapping queried `.is('id', null)` (which is dead logic for UUID primary keys). If a patient profile was created anonymously with a random UUID, deleting the old profile first to re-map to their Auth ID triggered `ON DELETE SET NULL` on the foreign key relationship, permanently severing all their historical appointments.
+- **Resolution:**
+  - **BUG 1 Fix:** Verified that `{stripSystemMetadata(selectedAptDetails?.clinical_notes) || "No description provided."}` is now active in `page.tsx` and all archive lists, fully exposing clinical data.
+  - **BUG 2 Fix:** Created a secure server-side action `remapLegacyProfile(email, newUserId)` inside `app/lib/telemedicine/booking.ts` executed via `supabaseAdmin`:
+    1. Fetches the legacy profile.
+    2. Securely copies it and inserts a new profile row with the authenticated `user.id`.
+    3. Safely updates all existing appointments matching the patient's email or old ID to point to the new `user.id`.
+    4. Deletes the legacy profile, preventing `ON DELETE SET NULL` from disconnecting the historical records.
+  - **Layout Refactoring:** Modified `app/dashboard/layout.tsx` to search for legacy profiles by email and call `remapLegacyProfile` server-side before refetching client-side, making the login-auto-link completely safe.
+- **Verification:**
+  - Completed type-checking with `npx tsc --noEmit` yielding 100% success.
+  - Production Next.js Turbopack build compiled all pages and routes flawlessly with zero compilation errors.
+
+## 44. Booking Flow Step 3: Identity & Authentication UI Redesign
+- **Context:**
+  - In alignment with the visual and typography overhaul of the telemedicine booking flow, Step 3 (Identity & Authentication) required a modern, professional, and visually engaging design. The form cards and inputs were visually flat, lacking clear structure, responsive indicators, or intuitive guidance for new vs. returning patients.
+- **Resolution:**
+  - **Left-Aligned Input Icons:** Configured a high-fidelity wrapper pattern (`styles.inputWrapper`, `styles.textareaWrapper`) that absolute-positions descriptive Lucide icons (`UserRound`, `Phone`, `Mail`, `Lock`, `FileText`) on the left side of every text field, shifting input padding and animating opacity on focus-within states for a highly professional experience.
+  - **Glassmorphic Connected Profile Card:** Redesigned the returning patient profile connection interface into an elegant glass panel (`backdrop-filter: blur(12px)`) with rounded borders, a success-green light capsule wrapping a check icon, and a highly polished sign-out pill button.
+  - **Tactile Toggle Control:** Styled the segment buttons for new vs. returning patient toggles with active drop-shadowed capsules and Outfit font sizes.
+  - **Dynamic Password Strength HUD:** Redesigned the password strength indicator to feature a dynamic text label (Too Weak, Medium, Very Secure) that lights up and matches the responsive color-changing bars.
+  - **Diagnostic Summary Grid:** Polished the pricing summary column in step 3 to present clear cost lines and border alignments matching the review screens.
+- **Verification:**
+  - Verification compilation ran successfully: `npx tsc --noEmit` completed with zero warnings or errors.
+  - Verification build compiled successfully: Checked Next.js pages build, ensuring the added JSX elements and CSS classes prerendered cleanly.
+
+## 45. Booking Flow Step 4: Clinical Dossier & Cart Review UI Redesign
+- **Context:**
+  - The Step 4 "Review & Confirm" card in the Booking Wizard previously displayed a flat list of data points inside generic unstyled div boxes, creating an off-balance layout with poor visual contrast and weak hierarchy. It lacked the institutional gravity expected of a premium, established healthcare center.
+- **Resolution:**
+  - **Structured Clinical Sections:** Segregated the appointment data into two highly distinct, semantic panels: **Clinical Consultation** (specialty, modality, scheduled date, selected time slot) and **Patient Dossier** (full name, phone number, email address, optional reason for visit).
+  - **Dossier Heading Icons:** Wired brand primary Lucide icons (`Stethoscope`, `UserRound`) to the section headers, utilizing the Outfit/Playfair typographic hierarchy to separate layout blocks clearly.
+  - **Clinical Transcription Blockquote:** Styled the "Reason for Visit" value inside a professional blockquote element (`styles.reviewReasonQuote`) utilizing a faint oklch teal background, curved borders, and an authoritative primary teal left-hand vertical accent line.
+  - **Custom Review CSS Classes:** Developed highly customizable CSS grid classes (`.reviewBrief`, `.reviewSection`, `.reviewSectionHeader`, `.reviewGrid`, `.reviewItem`, `.reviewLabel`, `.reviewVal`, `.reviewValDark`) that display cost summaries and patient forms in a symmetric, 2-column grid.
+- **Verification:**
+  - Static analysis check ran successfully: `npx tsc --noEmit` completed with 100% clean stdout and zero errors.
+  - Verification build compiled successfully: Checked Next.js pages build, ensuring the added JSX elements and CSS classes prerendered cleanly.
+
+## 46. Booking Flow Step 5: High-Trust Success & Confirmation UI Redesign
+- **Context:**
+  - The previous Step 5 booking confirmation success panel was flat, sterile, and lacked clear patient guidance, rendering physical clinic arrivals or virtual telehealth entry paths ambiguous. The layout was basic and did not evoke the premium medical branding of Maryland Healthcare.
+- **Resolution:**
+  - **Pulsing Success Ring Animation:** Enclosed the `CheckCircle2` success icon in a relative wrapper (`styles.successBadgeContainer`) featuring an absolute-positioned pulsing glow ring (`styles.successPulseRing`) running on a smooth CSS keyframes transition.
+  - **Structured Invoice Receipt:** Polished the `confirmationReceipt` panel into a dynamic high-contrast clinical invoice card featuring dashes, dedicated Lucide `Receipt` header icons, and curved receipt tiles.
+  - **Dynamic Telehealth and Clinic Advisories:** Built distinct advisories for modalities: virtual consultations render a secure telehealth chamber card with an animated breathing icon, while in-clinic selections display an important clinic arrival instructions card.
+  - **Urgent Emergency Hotline Pill:** Replaced the plain disclaimer paragraph with an emergency disclaimer badge (`styles.emergencyDisclaimerBadge`) styled as a prominent crimson hot-line advisory pill.
+  - **Dual Navigation CTAs:** Replaced the single homepage redirect with custom dual buttons: "Access Patient Portal" (routing to `/dashboard/my-appointments`) and "Return to Homepage" (routing to `/`), complete with hover scale translations.
+- **Verification:**
+  - Static analysis check ran successfully: `npx tsc --noEmit` completed with 0 warnings or compiler errors.
+  - Next.js production build succeeded with zero prerendering or hydration issues.
+
+## 47. Doctor & Staff Overview Dashboard UI Redesign
+- **Context:**
+  - The Doctor/Staff main overview dashboard (`app/dashboard/page.tsx`, `overview.module.css`) previously had flat, sterile cards, generic tables, and a simple detail panel. It did not reflect the premium glassmorphic visual language implemented across other portals.
+- **Resolution:**
+  - **Glassmorphic Stat Cards:** Replaced boring cards with rich, translucent glass panels (`var(--glass-bg-elevated)`) styled with thin active oklch borders, subtle shadows (`0 10px 30px -15px rgba(0,0,0,0.04)`), and custom top border gradients. Added smooth hover translations (`translateY(-4px)`) and scaling icons (`scale(1.08) rotate(4deg)`).
+  - **Live Queue Table Overhaul:** Designed sleek, padded tables with lightweight oklch backgrounds for headers and rows. Built glowing, breathing video call join capsules featuring an interactive pulsing keyframes animation.
+  - **Slide-Out Details Panel:** Overhead the patient details side panel with immersive backdrop blurs (`backdrop-filter: blur(24px)`), translucent white layers, textured consultation textareas, and italicized clinical transcription blockquotes.
+  - **Sleek Autohide Toasts:** Overhauled status toasts to float elegantly with a soft, breathing oklch background and dynamic slide-down entry keyframes.
+
+## 48. Appointments Archive & Filter View UI Redesign
+- **Context:**
+  - The Doctor/Staff full appointments list (`app/dashboard/appointments/page.tsx`, `appointments.module.css`) used basic inputs and simple tables that felt disjointed from the main platform.
+- **Resolution:**
+  - **Translucent Filters Panel:** Wrapped the date, modality, status, and patient search inputs in a unified glassmorphic container with rounded borders and responsive margins.
+  - **Unified Table & Detail Panels:** Re-applied the identical glassmorphic layout, row hovers, status pills, table actions, details side panel, and toast systems to ensure character-for-character consistency between the main overview and archived slots.
+- **Verification:**
+  - Static analysis check ran successfully: `npx tsc --noEmit` completed with 0 warnings or compiler errors.
+  - Production build `npm run build` compiled 100% successfully in Turbopack with zero warnings, page hydration errors, or styling conflicts.
+
+## 49. Patient Retry Payment Flow and Hoisting Fix
+- **Context:**
+  - Virtual consultations booked by patients that did not have payments completed were shown as `pending` in the patient profile, but there was no way for patients to retry the payment from the appointments dashboard.
+- **Resolution:**
+  - **Payment Retry Action:** Updated [my-appointments/page.tsx](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/my-appointments/page.tsx) to integrate the `usePaystackPayment` hook and render a dynamic "Pay Consultation Fee" checkout trigger button on unpaid virtual consultations.
+  - **Success Handling:** Upon successful payment verification, the component calls the `confirmBooking` server action, transitioning the status to `'confirmed'`, setting payment status to `'paid'`, generating a Jitsi video meet link, dispatching email confirmations, and rendering a custom inline success banner.
+  - **CSS Styling:** Added the corresponding `.payBtn`, `.unpaidBadge`, and `.successBanner` style classes inside [my-appointments.module.css](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/my-appointments/my-appointments.module.css) matching the Outfit typography and oklch design tokens.
+  - **TypeScript Hoisting Resolution:** Relocated the `loadAppointments` and `supabase` definitions above the `useEffect` block in `page.tsx` to fix compile-time hoisting and block-scope initialization errors.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 50. Appointments Archive and Overview Status Rendering Discrepancy Fix
+- **Context:**
+  - On the receptionist Overview page, unpaid appointments correctly showed their database status as "Pending" (orange badge). However, on the Appointments Archive page, the same appointments incorrectly displayed as "Confirmed" (green badge) in both the table listing and the details drawer side panel.
+- **Resolution:**
+  - **Appointments Archive Table:** Refactored [appointments/page.tsx](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/appointments/page.tsx) to dynamically read the actual database status `apt.status` and assign the correct styling class (such as `styles.statusPending` or `styles.statusConfirmed`), resolving the hardcoded fallback that was masking pending slots as confirmed.
+  - **Appointments Archive Drawer:** Replaced the hardcoded Status label element in the drawer side-panel with the dynamic status badge helper class logic.
+  - **Receptionist Overview Drawer:** Corrected the hardcoded Status label inside [page.tsx](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/page.tsx) details drawer to dynamically render the corresponding status badges.
+  - **Styling updates:** Added `.statusPending` style class configuration directly into [appointments.module.css](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/dashboard/appointments/appointments.module.css) matching the amber/orange HSL/oklch theme layout.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 51. Past-Due Pending Appointments Autocancel Integration
+- **Context:**
+  - Pending appointments that were never finalized (e.g. abandoned booking/payment flow) remained in the queue as "Pending" even after their scheduled date and time had passed.
+- **Resolution:**
+  - **Cleanup Cron Route Integration:** Modified [route.ts](file:///c:/Users/Swift%20America/Desktop/Redisign%20of%20Maryland%20Website/Redesign%20of%20Maryland%20Website/app/api/cron/cleanup/route.ts) to query all appointments in the database that are in a `'pending'` status with a `scheduled_at` timestamp in the past (`scheduled_at < now`).
+  - **State Transition:** Automatically updates the status of these past-due records to `'cancelled'`. This preserves database slot cleanup auditing without physically deleting slots that have actually passed the appointment date window.
+- **Verification:**
+  - Checked compilation with `npx tsc --noEmit` and successfully ran `npx next build` with 100% success.
+
+## 52. Doctor-Driven Availability & Specialty Booking (Phase 6)
+- **Context:**
+  - Needed to migrate from static booking grids to dynamic slot checking linked to active doctor schedules, ensuring slots are only bookable if an attending doctor of that specialty is free.
+- **Resolution:**
+  - **Dynamic Schedule Check:** Refactored `getBookedSlots(date, specialty)` to query active doctors of the specialty and check slots against their weekly `availability` JSONB config and active bookings. Returns slot as booked if no matching doctor is free.
+  - **Dynamic Auto-Assignment:** Configured `createPendingBooking` and `submitBooking` server actions in `booking.ts` to call `findFreeDoctorForSlot` and automatically assign the first free doctor to `doctor_id` in the database, preventing race conditions.
+  - **Doctor Settings Week Planner:** Added an interactive, mobile-responsive Weekly Availability Planner card to the settings panel (`app/dashboard/settings/page.tsx`, `settings.module.css`). Logged-in doctors can toggle 30-min slots for each weekday and persist them to the database.
+  - **A11y & Wizard Fallbacks:** Configured `BookingWizard.tsx` to pass the chosen specialty and render a glassmorphic notice if all slots are full or no doctors exist.
+- **Verification:**
+  - Static compiler checks (`npx tsc --noEmit`) and Turbopack Next.js production builds (`npx next build`) completed with 100% success and zero errors or warnings.
+
+## 53. Doctor Onboarding Credentials & Admin Availability Editor (Phase 7)
+- **Context:**
+  - When new doctors were registered by admins, they did not receive their login portal links or temporary passwords. Additionally, admins lacked a dashboard interface to set or modify availability calendars for attending doctors.
+- **Resolution:**
+  - **Credential Onboarding Emails:** Added `sendDoctorWelcomeEmail` to `app/lib/telemedicine/email.ts` to dispatch credentials via Resend. Triggered this welcome mail in `addDoctorWithAuth` (`app/dashboard/doctors/actions.ts`) immediately following successful registration.
+  - **Admin Availability Actions:** Created `updateDoctorAvailability` in `app/dashboard/doctors/actions.ts` to verify admin privileges and update the target doctor's `availability` JSONB column using `supabaseAdmin`.
+  - **Admin Availability Planner Modal:** Added a "Set Availability" option to the doctor directory actions dropdown in `app/dashboard/doctors/page.tsx`. Built a glassmorphic modal containing day tabs (Monday–Friday) and timeslot toggle buttons that mirrors the doctor settings layout, utilizing dedicated helper styles in `doctors.module.css`.
+- **Verification:**
+  - Ran static compilation check `npx tsc --noEmit` yielding zero warnings or errors.
+  - Completed production build check `npx next build` with 100% success across all routes.
+
+## 54. Admin Doctor Sessions & Scheduler Week Planner (Phase 8)
+- **Context:**
+  - Configuring availability by checking individual timeslot chips was inefficient. Admins needed a shift-based session planner (as shown in image mockups) to define doctor shift hours, break times, and slot durations.
+- **Resolution:**
+  - **Sessions Config Schema:** Created migration `015_add_sessions_config.sql` adding a `sessions_config` JSONB column to the `profiles` table to store shift structures.
+  - **Slot Compiler Helper:** Built `compileSessionsToSlots` inside `app/dashboard/doctor-sessions/actions.ts` to parse shift start/end minutes, step by the slot duration, exclude intervals overlapping break definitions, format times to 12-hour strings (e.g. `"09:00 AM"`), and save them to `availability` to maintain backward-compatibility with the front-end Booking Wizard.
+  - **Admin Sessions Page:** Created `app/dashboard/doctor-sessions/page.tsx` and `sessions.module.css` with Outfit styling. Admins can select doctors, set durations, toggle work days, configure shift ranges, and set clinical breaks.
+  - **Doctor Settings Sync:** Integrated the exact same sessions grid planner into `app/dashboard/settings/page.tsx` and `settings.module.css` for doctors to configure their own hours, invoking `saveDoctorOwnSessions` server action.
+  - **Sidebar Navigation:** Added `Doctor Sessions` nav item (Lucide `Clock` icon) to the sidebar in `app/dashboard/layout.tsx` for admins, guarding the path from other roles.
+- **Verification:**
+  - Static type compilation check (`npx tsc --noEmit`) and Turbopack Next.js builds (`npx next build`) completed with 100% success across all 35 routes.
+
+## 28. Dynamic Session Duration Sync (Phase 9)
+- **Context:** Admin Doctor Sessions page allowed 15/30/45/60-minute slot durations, but the booking wizard and reschedule modal used hardcoded 30-minute morning/afternoon arrays. A 15-minute doctor config didn't reflect on the booking page.
+- **Decision:** Eliminated all hardcoded slot arrays. The server now reads each doctor's `availability` JSONB, unions all configured slots for the selected specialty and day, sorts chronologically, and returns them dynamically via `getDaySlots`.
+- **Resolution:**
+  - **`booking.ts`:** Added `getDaySlots(date, specialty)` → `{ allSlots: string[], bookedSlots: string[] }`. Relaxed scheduling boundary validation from 30-minute to 5-minute alignment. `getBookedSlots` preserved as backward-compat wrapper.
+  - **`BookingWizard.tsx`:** Replaced static `morningSlots`/`afternoonSlots` arrays with `allSlots` state. Effect now calls `getDaySlots`, splits AM/PM inline. Added `isLoadingSlots` loading state with spinner. Clears stale `timeSlot` when slots change.
+  - **`my-appointments/page.tsx`:** Same pattern. Reschedule modal fetches dynamic slots via `getDaySlots`, filters by appointment specialty.
+- **Pattern:** All slot labels (`"09:15 AM"`) are now truth-sourced from `profiles.availability` JSONB written by the sessions compiler. No hardcoded time arrays exist anywhere.
+- **Verification:** `npx tsc --noEmit` passes cleanly.
+
+## 56. Doctor Sessions System Audit Fixes (Phase 10)
+- **Context:**
+  - An audit of the Doctor Sessions System identified 14 findings including: schema file out of sync, code duplication (`getCallerProfile`), specialty mapping discrepancies, hard doctor deletes, drift in the two availability columns, missing server configuration validation, lack of TypeScript typings on the settings page, and hardcoded colors in sessions styling modules.
+- **Resolution:**
+  - **Database Sync:** Added `availability` and `sessions_config` columns to the `profiles` table in `schema.sql`. Created migration `016_add_service_to_appointments.sql` and added a `service` text column to the `appointments` table.
+  - **Shared Auth Utility:** Created `app/lib/auth.ts` containing `getCallerProfile()` and imported it in `app/dashboard/actions.ts`, `app/dashboard/doctors/actions.ts`, and `app/dashboard/doctor-sessions/actions.ts` to deduplicate logic.
+  - **Specialty/Service Mapping:** Created `mapServiceToSpecialty` inside `booking.ts` to convert booking wizard service names to doctor specialties. Used it in `findFreeDoctorForSlot`, `getDaySlots`, and `confirmBooking` self-healing doctor assignment.
+  - **Soft Deactivation:** Changed `deactivateDoctor` inside `doctors/actions.ts` from hard DELETE to updating `deleted_at` while deleting their auth record via `supabaseAdmin.auth.admin.deleteUser`.
+  - **Synchronization Drift:** Integrated `convertSlotsToSessionsConfig(availability)` in `doctors/actions.ts` to automatically reconstruct a `sessions_config` object from slot arrays, updating both columns concurrently.
+  - **Server-Side Validation:** Created `validateSessionsConfig(config)` inside `doctor-sessions/actions.ts` to enforce valid formats for durations, starts, ends, and breaks before writing to the database.
+  - **Break Limits & strong typing:** Added strict interfaces (`BreakConfig`, `DayConfig`, `SessionsConfig`) in settings and sessions views. Increased the daily break limit to 3 and added toast error notifications on exceed.
+  - **CSS Token Harmonization:** Replaced hardcoded HEX/OKLCH color values in `sessions.module.css` with Design System variables (`var(--primary-hover)`, `var(--feedback-error)`, `var(--badge-error-bg)`), mapping toast components to matching OKLCH color spaces.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 57. Soft-Deleted Doctor Recovery & Historical Appointment Migration
+- **Context:**
+  - Deactivating a doctor soft-deletes their profile (`deleted_at = timestamp`) and deletes their login credentials in Supabase Auth to protect and preserve past clinical notes and appointments.
+  - However, when admins subsequently re-added that same doctor using their previous email address, the registration failed with "A profile with this email already exists" because the email record remained in the soft-deleted profile row.
+- **Resolution:**
+  - **Differentiated Check:** Refactored `addDoctorWithAuth` in `app/dashboard/doctors/actions.ts` to query using `.maybeSingle()` and distinguish between active and soft-deleted profiles.
+  - **Profile Restoration:** If a soft-deleted profile is detected, the system generates a new Auth account (with a new `user.id`), preserves and restores the doctor's previous weekly availability planner (`availability`) and sessions configurations (`sessions_config`), and inserts the new profile under the new Auth `id`.
+  - **Appointment Migration:** Automatically queries and updates all past clinical notes, diagnostic queues, and patient appointments from the old doctor's `profiles.id` to the newly generated `authData.user.id`.
+  - **Safe Cleanup:** Cleanly deletes the old soft-deleted profile record, avoiding database constraint conflicts and ensuring 100% data integrity under NDPA/clinical-note audit guidelines.
+- **Verification:**
+  - Ran static compiler checks (`npx tsc --noEmit`) with 100% success and zero compiler warnings or errors.
+
+## 58. Suspended Doctor UX & Redirect Fix + Schema Snapshot Index Update
+- **Context:**
+  - In the previous deactivation and suspension changes, when a suspended doctor was detected by the dashboard auth guard, the system called `auth.signOut()` but performed a bare `return` without explicit redirection. This caused the browser to display a blank screen for a render cycle before the catch-all redirect kicked in, with no visual explanation to the user.
+  - Furthermore, the `idx_profiles_is_active` index added in migration `017_add_is_active_to_profiles.sql` was missing from the `schema.sql` snapshot file.
+- **Resolution:**
+  - **Auth Guard Redirection:** Updated `app/dashboard/layout.tsx` to redirect suspended accounts to `/login?error=suspended` following the `signOut()` call.
+  - **Login UX Feedback:** Modified `app/login/page.tsx` to include a React `useEffect` checking the search query parameters for `error=suspended` and rendering a clean, clear glassmorphic error card: *"Your account has been suspended. Please contact the administrator."*
+  - **Schema Snapshot Index:** Added the missing `idx_profiles_is_active` partial index declaration under the indexes section of the `profiles` table in `schema.sql` snapshot.
+- **Verification:**
+  - Static analysis verification (`npx tsc --noEmit`) passed successfully with 0 compilation warnings or errors.
+
+## 59. Self-Healing Specialties Column Fallback in Booking Pipeline
+- **Context:** Registrations and checkouts failed on database inserts with `column appointments.service does not exist` or Postgres schema cache mismatches because the hosted database lacked the `service` column.
+- **Resolution:** Implemented self-healing transaction interceptors inside `submitBooking` and `createPendingBooking` in `booking.ts`. If database writes fail on missing `service` columns, the query engine dynamically extracts specialty names, prepends them to description/notes (e.g. `Service: General Practice | Reason: severe headache`), strips `service` from the query object, and retries the insert immediately. This resolves booking locks instantly for the patient while retaining absolute forward-compatibility if the column is added later.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 60. Overhaul of Step 5 Booking Success Screen UI/UX
+- **Context:** The success screen had a duplicate 'Consultation Confirmed' heading clashing with the shell top wrapper, and featured an out-of-context 'Access Virtual Waiting Room' card with a CTA button directing the user to enter the room immediately after booking, causing confusion.
+- **Resolution:**
+  - **Header De-duplication:** Stripped `<h2 className={styles.successTitle}>Consultation Confirmed</h2>` inside Step 5 of `BookingWizard.tsx` to align with the global wrapper's `h1` header, eliminating visual text duplication.
+  - **Eliminated Fake Waiting Room UX:** Replaced the confusing Jitsi waiting room card and immediate CTA button with a highly-polished, symmetric 'Important Telemedicine Advisory' card. It explicitly outlines that the secure room is locked for privacy and will open precisely 5 minutes prior to the scheduled date/time, and directs the patient to access the link via their email or Patient Portal when active. This completely rectifies the context confusion.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 61. Patient Portal Exclusion for In-Clinic Visits in Booking and Email Flows
+- **Context:** For in-clinic visits, patients should not be forced or guided into a patient portal since an account is not created for them. However, the confirmation step rendered the 'Access Patient Portal' button, and patient notification emails (confirmation, reminders, reschedules, cancellations) included active links to the patient portal, causing functional confusion.
+- **Resolution:**
+  - **Confirmation Page Button Logic:** Refactored `BookingWizard.tsx` to explicitly check `state.modality === "telemedicine"` instead of a general exclusion denylist. Now, the 'Access Patient Portal' button is strictly rendered for virtual consultations, while in-clinic visits are cleanly directed to 'Return to Homepage' as their primary and sole action.
+  - **Patient Notification Emails:** Conditionalized the Resend email template functions inside `email.ts` (`sendBookingConfirmation`, `sendAppointmentReminder`, `sendRescheduleConfirmation`, `sendCancellationConfirmation`) using explicit checks on the consultation `type`. All patient portal buttons, links (`/login` / `/dashboard/my-appointments`), and portal-related wording are dynamically removed or rephrased (e.g. directing to contact the clinic or visit the website) for in-clinic visits.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 62. Reason for Visit Integration in Admin & Receptionist Staff Email Notifications
+- **Context:** The administrative and receptionist staff require the patient's comment/reason for visit (submitted as description) to properly prepare for incoming clinic or virtual appointments. However, this field was not visible in the new appointment staff emails. Additionally, a parameter swap bug inside `submitBooking` passed the patient description string in place of the service name argument.
+- **Resolution:**
+  - **Email Template Update:** Extended the `sendStaffNotification` template inside `email.ts` to accept an optional `description?: string | null` parameter and conditionally render a "Reason for Visit" section within the HTML email body.
+  - **Booking Engine Fixes:**
+    - Corrected the parameter mapping inside `submitBooking` in `booking.ts` to correctly pass `bookingData.service` as the 6th argument and `bookingData.description` as the 8th argument.
+    - Updated `confirmBooking` in `booking.ts` to retrieve and pass `appointment.description` as the 8th argument.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 63. Skip Time Slot Lock & Double-Booking Guards for In-Clinic Visits
+- **Context:** In-clinic visits are 24/7 walk-ins and do not reserve synchronous specific time slots. However, the system mapped all in-clinic visits to a default date-time slot (e.g. 08:00 AM) on the booked day. This caused the system's timezone and double-booking checks to block any subsequent patients from booking an in-clinic visit on that same day, throwing the error "This time slot is no longer available. Please select another time."
+- **Resolution:**
+  - **Telemedicine-Only Guard:** Wrapped the timezone boundary verification and the database double-booking slot validation logic in `submitBooking`, `createPendingBooking`, and `confirmBooking` inside `booking.ts` in an `if (bookingData.type === 'telemedicine')` (or `appointment.type === 'telemedicine'`) block.
+  - **Unrestricted Walk-Ins:** Now, multiple patients can book in-clinic visits on the same day without triggering any slot lock or collision errors, while virtual consultations remain strictly protected against double-bookings.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 64. Regex-Based Parsing Fallback for Merged Service and Reason Fields in Staff Emails
+- **Context:** Due to the missing `service` column in the database (resolved via Decision 59's self-healing fallback), the booked specialty was prepended inside the `description` text block in the format `Service: Pediatrics | Reason: severe pain`. When retrieving this record to send staff emails, the `service` property returned as `undefined`, causing the email template to fall back to the default "General Consultation" value while displaying the entire merged string under "Reason for Visit".
+- **Resolution:**
+  - **Self-Healing Parsing Interceptor:** Added a regex-based parsing routine inside `sendStaffNotification` in `email.ts` that triggers when the `service` parameter is missing and the `description` begins with `"Service: "`.
+  - **Dynamic Field Separation:** The parser extracts the original specialty (e.g. `Pediatrics`) and the clean description notes from the merged string at runtime. It then maps them respectively to `resolvedService` and `resolvedDescription`, yielding clean, well-separated email outputs without duplicate fields or fallback service labels.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+## 65. Removal of Default 8:00 AM Misleading Times from Walk-In Email Workflows
+- **Context:** In-clinic bookings do not reserve synchronous specific time slots and are treated as 24/7 walk-ins. However, under the hood, they default to `08:00 AM` on the booked date to maintain a valid database timestamp. Showing this 8:00 AM time in patient and staff emails was misleading, as it implied the patient had booked a specific time slot.
+- **Resolution:**
+  - **Dynamic Time Labeling:** Refactored the email template functions inside `email.ts` (`sendBookingConfirmation`, `sendStaffNotification`, `sendAppointmentReminder`, `sendRescheduleConfirmation`, `sendCancellationConfirmation`) to completely omit or replace the time label for walk-in consultations:
+    - Renders `"Time: 24/7 Walk-in"` instead of `Time: 8:00 AM`.
+    - Omits the hours/minutes formatting from dates in cancellation and staff emails, displaying them as `"Monday, June 1st, 2026 (24/7 Walk-in)"`.
+    - Adjusts subject lines and reminders to reference "Today" instead of a specific hour.
+- **Verification:**
+  - Verified static compilation with `npx tsc --noEmit` and production compiling with `npx next build` with 100% success.
+
+
+
+
+

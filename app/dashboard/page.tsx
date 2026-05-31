@@ -396,7 +396,16 @@ export default function DashboardOverview() {
                   </div>
                   <div>
                     <span>Status</span>
-                    <strong className={styles.statusLabelConfirmed}>Confirmed</strong>
+                    <div>
+                      <span className={
+                        selectedAptDetails?.status === 'confirmed' ? styles.statusConfirmed :
+                        selectedAptDetails?.status === 'completed' ? styles.statusCompleted :
+                        selectedAptDetails?.status === 'cancelled' ? styles.statusCancelled :
+                        styles.statusPending
+                      }>
+                        {selectedAptDetails?.status ? selectedAptDetails.status.charAt(0).toUpperCase() + selectedAptDetails.status.slice(1) : 'Pending'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -433,7 +442,7 @@ export default function DashboardOverview() {
                   <label>TELEMEDICINE LINK</label>
                   <a href={selectedAptDetails.meet_link} target="_blank" rel="noopener noreferrer" className={styles.panelLink}>
                     <Video size={16} />
-                    Open Consultation Room
+                    Join Virtual Clinic
                   </a>
                 </div>
               )}

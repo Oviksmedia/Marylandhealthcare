@@ -38,10 +38,28 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
 
+    // 4. Cancel pending appointments where the scheduled time has already passed
+    const now = new Date();
+    const { data: cancelledBookings, error: cancelError } = await supabaseAdmin
+      .from('appointments')
+      .update({ status: 'cancelled' })
+      .eq('status', 'pending')
+      .lt('scheduled_at', now.toISOString())
+      .select('id, patient_name, scheduled_at');
+
+    if (cancelError) {
+      console.error('Cron Cleanup Cancel Error:', cancelError);
+      return NextResponse.json({ error: cancelError.message }, { status: 500 });
+    }
+
     return NextResponse.json({
       message: 'Pending bookings cleanup execution completed successfully.',
       cleanedCount: expiredBookings?.length || 0,
-      details: expiredBookings || []
+      cancelledCount: cancelledBookings?.length || 0,
+      details: {
+        deleted: expiredBookings || [],
+        cancelled: cancelledBookings || []
+      }
     });
 
   } catch (err: any) {

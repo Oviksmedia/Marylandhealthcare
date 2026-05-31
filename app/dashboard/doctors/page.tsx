@@ -20,7 +20,7 @@ import {
 import styles from "./doctors.module.css";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/app/lib/supabase";
-import { addDoctorWithAuth, editDoctorProfile, deactivateDoctor } from "./actions";
+import { addDoctorWithAuth, editDoctorProfile, deactivateDoctor, suspendDoctor, unsuspendDoctor, updateDoctorAvailability } from "./actions";
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<any[]>([]);
@@ -52,8 +52,24 @@ export default function DoctorsPage() {
 
   // Custom states for modern glassmorphic overlays and toasts
   const [confirmDeactivateState, setConfirmDeactivateState] = useState<{ id: string; name: string } | null>(null);
+  const [confirmSuspendState, setConfirmSuspendState] = useState<{ id: string; name: string } | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isDeactivating, setIsDeactivating] = useState<string | null>(null);
+  const [isSuspending, setIsSuspending] = useState<string | null>(null);
+
+  // Availability Editor State
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+  const [selectedDoctorForAvailability, setSelectedDoctorForAvailability] = useState<any>(null);
+  const [availability, setAvailability] = useState<any>({
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: []
+  });
+  const [activeDay, setActiveDay] = useState<string>("monday");
+  const [isSavingAvail, setIsSavingAvail] = useState(false);
+
 
   const supabase = getSupabaseBrowserClient();
 
@@ -70,7 +86,8 @@ export default function DoctorsPage() {
     const { data } = await supabase
       .from('profiles')
       .select('*')
-      .eq('role', 'doctor');
+      .eq('role', 'doctor')
+      .is('deleted_at', null);
     setDoctors(data || []);
     setIsLoading(false);
   }
@@ -151,6 +168,41 @@ export default function DoctorsPage() {
     }
   }
 
+  async function executeSuspendDoctor(doctorId: string, doctorName: string) {
+    setIsSuspending(doctorId);
+    try {
+      const result = await suspendDoctor(doctorId);
+      if (!result.success) {
+        setToast({ message: "Error suspending doctor: " + result.error, type: 'error' });
+      } else {
+        setToast({ message: `Dr. ${doctorName} has been suspended. They can no longer access the portal.`, type: 'success' });
+        loadDoctors();
+      }
+    } catch (err: any) {
+      setToast({ message: "An error occurred: " + (err.message || err), type: 'error' });
+    } finally {
+      setIsSuspending(null);
+      setConfirmSuspendState(null);
+    }
+  }
+
+  async function executeUnsuspendDoctor(doctorId: string, doctorName: string) {
+    setIsSuspending(doctorId);
+    try {
+      const result = await unsuspendDoctor(doctorId);
+      if (!result.success) {
+        setToast({ message: "Error unsuspending doctor: " + result.error, type: 'error' });
+      } else {
+        setToast({ message: `Dr. ${doctorName} has been reactivated.`, type: 'success' });
+        loadDoctors();
+      }
+    } catch (err: any) {
+      setToast({ message: "An error occurred: " + (err.message || err), type: 'error' });
+    } finally {
+      setIsSuspending(null);
+    }
+  }
+
   async function handleViewSchedule(doctor: any) {
     setSelectedDoctorForSchedule(doctor);
     setIsScheduleLoading(true);
@@ -169,6 +221,25 @@ export default function DoctorsPage() {
     }
     setIsScheduleLoading(false);
   }
+
+  async function handleSaveAvailability(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedDoctorForAvailability) return;
+    setIsSavingAvail(true);
+
+    const result = await updateDoctorAvailability(selectedDoctorForAvailability.id, availability);
+
+    if (!result.success) {
+      setToast({ message: "Error updating availability: " + result.error, type: 'error' });
+    } else {
+      setToast({ message: `Successfully updated availability schedule for Dr. ${selectedDoctorForAvailability.full_name}.`, type: 'success' });
+      setIsAvailabilityModalOpen(false);
+      setSelectedDoctorForAvailability(null);
+      loadDoctors();
+    }
+    setIsSavingAvail(false);
+  }
+
 
   const filteredDoctors = doctors.filter(doc => 
     doc.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -205,7 +276,7 @@ export default function DoctorsPage() {
       ) : (
         <div className={styles.grid}>
           {filteredDoctors.map((doctor) => (
-            <div key={doctor.id} className={styles.doctorCard}>
+            <div key={doctor.id} className={`${styles.doctorCard} ${doctor.is_active === false ? styles.doctorCardSuspended : ''}`}>
               <div className={styles.cardHeader}>
                 <div className={styles.avatar}>
                   {doctor.full_name.split(' ').map((n: string) => n[0]).join('').slice(0,2)}
@@ -233,6 +304,31 @@ export default function DoctorsPage() {
                         setIsEditModalOpen(true);
                         setActiveDropdownId(null);
                       }}>Edit Profile</button>
+                      <button onClick={() => {
+                        setSelectedDoctorForAvailability(doctor);
+                        const defaultAvailability = {
+                          monday: ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+                          tuesday: ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+                          wednesday: ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+                          thursday: ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+                          friday: ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"]
+                        };
+                        setAvailability(doctor.availability || defaultAvailability);
+                        setActiveDay("monday");
+                        setIsAvailabilityModalOpen(true);
+                        setActiveDropdownId(null);
+                      }}>Set Availability</button>
+                      {doctor.is_active !== false ? (
+                        <button className={styles.dropdownSuspend} onClick={() => {
+                          setConfirmSuspendState({ id: doctor.id, name: doctor.full_name });
+                          setActiveDropdownId(null);
+                        }}>Suspend Doctor</button>
+                      ) : (
+                        <button className={styles.dropdownReactivate} onClick={() => {
+                          executeUnsuspendDoctor(doctor.id, doctor.full_name);
+                          setActiveDropdownId(null);
+                        }}>Reactivate Doctor</button>
+                      )}
                       <button className={styles.dropdownDelete} onClick={() => {
                         setConfirmDeactivateState({ id: doctor.id, name: doctor.full_name });
                         setActiveDropdownId(null);
@@ -262,9 +358,18 @@ export default function DoctorsPage() {
               </div>
 
               <div className={styles.cardFooter}>
-                <div className={styles.status}>
-                  <CheckCircle2 size={14} color="#10b981" />
-                  <span>Active</span>
+                <div className={`${styles.status} ${doctor.is_active === false ? styles.statusSuspended : ''}`}>
+                  {doctor.is_active === false ? (
+                    <>
+                      <X size={14} />
+                      <span>Suspended</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={14} />
+                      <span>Active</span>
+                    </>
+                  )}
                 </div>
                 <button className={styles.viewBtn} onClick={() => handleViewSchedule(doctor)}>View Schedule</button>
               </div>
@@ -494,7 +599,122 @@ export default function DoctorsPage() {
           </div>
         </div>
       )}
+      {/* Admin Doctor Availability Modal */}
+      {isAvailabilityModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => {
+          setIsAvailabilityModalOpen(false);
+          setSelectedDoctorForAvailability(null);
+        }}>
+          <div className={styles.availabilityModal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div>
+                <h2>Set Availability Schedule</h2>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                  Managing slots for: <strong>{selectedDoctorForAvailability?.full_name}</strong>
+                </p>
+              </div>
+              <button onClick={() => {
+                setIsAvailabilityModalOpen(false);
+                setSelectedDoctorForAvailability(null);
+              }}><X size={20} /></button>
+            </div>
+
+            <div style={{ padding: '0 2rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className={styles.daySelector}>
+                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    className={`${styles.dayTab} ${activeDay === day ? styles.activeDayTab : ""}`}
+                    onClick={() => setActiveDay(day)}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+
+              <div className={styles.availabilityGridSection}>
+                <h3>Active Slots for {activeDay.charAt(0).toUpperCase() + activeDay.slice(1)}</h3>
+                <div className={styles.slotsGrid}>
+                  {[
+                    "08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",
+                    "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"
+                  ].map((slot) => {
+                    const isSelected = (availability[activeDay] || []).includes(slot);
+                    return (
+                      <button
+                        key={slot}
+                        type="button"
+                        className={`${styles.slotToggleChip} ${isSelected ? styles.activeSlotChip : ""}`}
+                        onClick={() => {
+                          setAvailability((prev: any) => {
+                            const currentDaySlots = prev[activeDay] || [];
+                            const updated = currentDaySlots.includes(slot)
+                              ? currentDaySlots.filter((s: string) => s !== slot)
+                              : [...currentDaySlots, slot];
+                            return {
+                              ...prev,
+                              [activeDay]: updated
+                            };
+                          });
+                        }}
+                      >
+                        {slot}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className={styles.saveAvailBtn}
+                disabled={isSavingAvail}
+                onClick={handleSaveAvailability}
+              >
+                {isSavingAvail ? <Loader2 className={styles.spinner} size={18} /> : "Update Availability Schedule"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Custom Premium Glassmorphic Deactivation Modal */}
+      {confirmSuspendState && (
+        <div className={styles.modalOverlay} onClick={() => setConfirmSuspendState(null)}>
+          <div className={styles.confirmSuspendModal} onClick={e => e.stopPropagation()}>
+            <div className={styles.warningIcon}>
+              <Clock size={28} color="var(--feedback-warning, #f59e0b)" />
+            </div>
+            <h2>Suspend Dr. {confirmSuspendState.name}?</h2>
+            <p>
+              This doctor will immediately lose access to the portal and will not be assigned new appointments.
+              All their data, appointments, and clinical notes are fully preserved. You can reactivate them at any time.
+            </p>
+            <div className={styles.confirmSuspendBtns}>
+              <button
+                className={styles.suspendCancel}
+                onClick={() => setConfirmSuspendState(null)}
+                disabled={isSuspending !== null}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.suspendConfirm}
+                onClick={() => executeSuspendDoctor(confirmSuspendState.id, confirmSuspendState.name)}
+                disabled={isSuspending !== null}
+              >
+                {isSuspending ? (
+                  <><Loader2 className={styles.spinner} size={14} /> Suspending...</>
+                ) : (
+                  "Yes, Suspend"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {confirmDeactivateState && (
         <div className={styles.modalOverlay} onClick={() => setConfirmDeactivateState(null)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>

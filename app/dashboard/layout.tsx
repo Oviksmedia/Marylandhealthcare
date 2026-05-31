@@ -10,7 +10,8 @@ import {
   Stethoscope,
   Bell,
   Search,
-  Loader2
+  Loader2,
+  Clock
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -131,6 +132,16 @@ export default function DashboardLayout({
         }
       }
 
+      // Check if the doctor is suspended
+      if (profile?.role === 'doctor' && profile?.is_active === false) {
+        setIsFetchingProfile(false);
+        setUserProfile(null);
+        setAuthUser(null);
+        await supabase.auth.signOut();
+        router.push('/login?error=suspended');
+        return;
+      }
+
       setUserProfile(profile);
       setIsFetchingProfile(false);
 
@@ -168,12 +179,12 @@ export default function DashboardLayout({
         return;
       }
     } else if (role === 'doctor') {
-      if (pathname.startsWith('/dashboard/doctors') || pathname.startsWith('/dashboard/patients') || pathname === '/dashboard/my-appointments') {
+      if (pathname.startsWith('/dashboard/doctors') || pathname.startsWith('/dashboard/doctor-sessions') || pathname.startsWith('/dashboard/patients') || pathname === '/dashboard/my-appointments') {
         router.push('/dashboard');
         return;
       }
     } else if (role === 'receptionist') {
-      if (pathname.startsWith('/dashboard/doctors') || pathname === '/dashboard/my-appointments') {
+      if (pathname.startsWith('/dashboard/doctors') || pathname.startsWith('/dashboard/doctor-sessions') || pathname === '/dashboard/my-appointments') {
         router.push('/dashboard');
         return;
       }
@@ -250,6 +261,7 @@ export default function DashboardLayout({
 
     if (role === 'admin') {
       items.push({ name: "Doctors", href: "/dashboard/doctors", icon: Stethoscope });
+      items.push({ name: "Doctor Sessions", href: "/dashboard/doctor-sessions", icon: Clock });
     }
 
     if (role === 'admin' || role === 'receptionist') {

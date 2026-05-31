@@ -1,33 +1,33 @@
 {
-  "workflow": "sprint-2-audit-finalization",
-  "started_at": "2026-05-24T12:00:00+01:00",
-  "updated_at": "2026-05-24T21:20:00+01:00",
-  "current_phase": "COMPLETED",
-  "phase_number": 4,
-  "total_phases": 4,
+  "workflow": "maryland-platform-wide-redesign",
+  "started_at": "2026-05-25T09:00:00+01:00",
+  "updated_at": "2026-05-30T14:55:00+01:00",
+  "current_phase": "Phase 15 COMPLETE — In-Clinic Visit Flow Redesign",
+  "phase_number": 15,
+  "total_phases": "ongoing (page-by-page)",
   "completion_pct": 100,
-  "status": "completed",
-  "feature_summary": "Sprint 2 final E2E fixes implemented and fully verified. BUG 1 resolved (clinical notes alias rendered seamlessly inside dashboards). BUG 2 resolved (secure, database-compliant remapLegacyProfile server action preserves historical appointments on profile auto-linking). Staged full copy-paste migrations for local/production SQL sync.",
-  "phases": {
-    "1_diagnose": {
-      "status": "done"
-    },
-    "2_implement_db_constraints_pricing_rate_limiter": {
-      "status": "done"
-    },
-    "3_wizard_a11y_and_alert_elimination": {
-      "status": "done"
-    },
-    "4_verify_and_e2e_polish": {
-      "status": "done"
-    }
+  "status": "phase_complete_awaiting_next",
+  "next_target": "/dashboard — Admin Dashboard Overview Redesign",
+  "page_sequence": [
+    { "page": "/book", "status": "done" },
+    { "page": "/dashboard/my-appointments", "status": "done" },
+    { "page": "/dashboard", "status": "next" },
+    { "page": "/dashboard/appointments", "status": "pending" },
+    { "page": "/dashboard/patients", "status": "pending" },
+    { "page": "/", "status": "pending" },
+    { "page": "/services + /about + /contact + /leadership", "status": "pending" }
+  ],
+  "last_verified": {
+    "tsc": "clean",
+    "next_build": "clean — Turbopack 13.8s, TS 11.5s, 35/35 pages"
   },
-  "notes": "Verified 100% clean type compilation with 'npx tsc --noEmit' and production compiling with 'npx next build' in Turbopack. All routes verified active.",
   "key_decisions": [
-    "Abstracted pricing constants to pricing.ts to align booking wizard and server calculation engines.",
-    "Introduced memory-backed rate limiter on sensitive registration and scheduling routes to shield database from script exploits.",
-    "Wired focus traps, ARIA attributes, and keyboard listeners to telemedicine consent interfaces to satisfy WCAG compliance.",
-    "Engineered server-side remapLegacyProfile transaction in booking.ts to bridge anonymous bookings with auth profiles securely without triggering ON DELETE SET NULL data loss."
+    "Step 1 split into 1A (modality auto-advance) and 1B (specialty selection) — eliminates bundled decision confusion",
+    "Soft delete for doctor deactivation — auth user preserved, history migrated on re-add",
+    "Slots compiled at query time from session configs via getDaySlots()",
+    "All redesign work is frontend only unless explicitly flagged",
+    "getPatientAppointments() server action bypassed RLS read block securely to populate doctor metadata on client",
+    "Self-Healing active doctors list query robustly falls back if is_active column is missing in hosted database"
   ],
   "blockers": []
 }

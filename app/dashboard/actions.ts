@@ -1,49 +1,7 @@
 'use server'
 
 import { supabaseAdmin } from '@/app/lib/supabaseAdmin'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-
-/**
- * Resolves the caller's identity and role from the server auth session.
- * Returns null if unauthenticated or profile not found.
- */
-async function getCallerProfile() {
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        },
-      },
-    }
-  )
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-
-  if (!supabaseAdmin) {
-    console.error('Supabase admin client not configured')
-    return null
-  }
-
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('id, full_name, role')
-    .eq('id', user.id)
-    .single()
-
-  return profile
-}
+import { getCallerProfile } from '@/app/lib/auth'
 
 /**
  * Assigns a doctor to an appointment.
@@ -470,4 +428,147 @@ export async function deletePatient(email: string) {
     return { success: false, error: err.message || 'Failed to delete patient.' }
   }
 }
+
+/**
+ * Fetches all appointments for a patient.
+ * Resolves doctor profiles (name, specialty) safely on the server side using supabaseAdmin.
+ */
+export async function getPatientAppointments() {
+  const caller = await getCallerProfile()
+
+  if (!caller) {
+    throw new Error('Authentication required.')
+  }
+
+  if (!supabaseAdmin) {
+    throw new Error('Server configuration error.')
+  }
+
+  // Find caller correct profile email
+  const { data: profile, error: profileErr } = await supabaseAdmin
+    .from('profiles')
+    .select('email')
+    .eq('id', caller.id)
+    .single()
+
+  if (profileErr || !profile) {
+    throw new Error('Patient profile not found.')
+  }
+
+  // Fetch appointments and join doctor details securely via supabaseAdmin (bypassing public RLS for profiles)
+  const { data, error } = await supabaseAdmin
+    .from('appointments')
+    .select('*, doctor:doctor_id(full_name, specialty), clinical_notes:notes')
+    .eq('patient_email', profile.email.toLowerCase().trim())
+    .order('scheduled_at', { ascending: false })
+
+  if (error) {
+    console.error('Failed to fetch patient appointments:', error)
+    throw new Error('Failed to fetch appointments: ' + error.message)
+  }
+
+  return data || []
+}
+
+/**
+ * Cancels a patient's own appointment.
+ * Verifies caller ownership, verifies appointment status, updates status, and triggers automated email dispatch.
+ */
+export async function cancelAppointmentPatient(appointmentId: string) {
+  const caller = await getCallerProfile()
+
+  if (!caller) {
+    return { success: false, error: 'Authentication required.' }
+  }
+
+  if (!supabaseAdmin) {
+    return { success: false, error: 'Server configuration error.' }
+  }
+
+  // Fetch target appointment
+  const { data: appointment, error: fetchError } = await supabaseAdmin
+    .from('appointments')
+    .select('id, patient_email, patient_name, status, scheduled_at, type, doctor_id, meet_link')
+    .eq('id', appointmentId)
+    .single()
+
+  if (fetchError || !appointment) {
+    return { success: false, error: 'Appointment not found.' }
+  }
+
+  // Verify caller email matches appointment patient email
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('email')
+    .eq('id', caller.id)
+    .single()
+
+  if (!profile || profile.email.toLowerCase().trim() !== appointment.patient_email.toLowerCase().trim()) {
+    return { success: false, error: 'Unauthorized: you can only cancel your own appointments.' }
+  }
+
+  // Status must be pending or confirmed
+  if (!['pending', 'confirmed'].includes(appointment.status)) {
+    return { success: false, error: `Cannot cancel an appointment with status '${appointment.status}'.` }
+  }
+
+  // Update appointment status to cancelled
+  const { error: updateError } = await supabaseAdmin
+    .from('appointments')
+    .update({ status: 'cancelled' })
+    .eq('id', appointmentId)
+
+  if (updateError) {
+    return { success: false, error: 'Failed to cancel appointment: ' + updateError.message }
+  }
+
+  // Trigger automated email dispatch (non-blocking)
+  try {
+    const {
+      sendCancellationConfirmation,
+      sendCancellationStaffNotification,
+      sendCancellationDoctorNotification
+    } = await import('@/app/lib/telemedicine/email')
+
+    // 1. Patient cancellation confirmation
+    await sendCancellationConfirmation(
+      appointment.patient_email,
+      appointment.patient_name,
+      appointment.scheduled_at,
+      appointment.type
+    )
+
+    // 2. Staff notification
+    await sendCancellationStaffNotification(
+      appointment.patient_name,
+      appointment.patient_email,
+      appointment.scheduled_at,
+      appointment.type
+    )
+
+    // 3. Doctor notification (if assigned)
+    if (appointment.doctor_id) {
+      const { data: doctorProfile } = await supabaseAdmin
+        .from('profiles')
+        .select('email, full_name')
+        .eq('id', appointment.doctor_id)
+        .single()
+
+      if (doctorProfile?.email) {
+        await sendCancellationDoctorNotification(
+          doctorProfile.email,
+          doctorProfile.full_name,
+          appointment.patient_name,
+          appointment.scheduled_at,
+          appointment.type
+        )
+      }
+    }
+  } catch (emailErr) {
+    console.error('Cancellation notifications failed (non-blocking):', emailErr)
+  }
+
+  return { success: true }
+}
+
 

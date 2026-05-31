@@ -1,0 +1,266 @@
+Maryland Healthcare Telemedicine System - OpenCode Audit Report
+Date: 2026-05-30
+Workspace: C:\Users\Swift America\Desktop\Redisign of Maryland Website\Redesign of Maryland Website
+
+Reference files loaded before audit:
+- .agents/memory/decisions.md
+- .agents/memory/redesign-progress.md
+- C:\Users\Swift America\.gemini\antigravity\brain\79821ea6-5846-4166-beb6-08e11d00f9ef\telemedicine_audit_blueprint.md
+
+1) Verifications (flow traces)
+
+Booking state machine (Step 1 to Step 5)
+- Step 1: State initializes at app/book/BookingWizard.tsx:222 with step=1 and step1Sub="modality".
+- Step 1 transition: Modality selection calls selectModalityAndAdvance() at app/book/BookingWizard.tsx:480 and advances to specialty sub-step while persisting modality/service constraints.
+- Step 2 slots: Date/service change triggers getDaySlots() at app/book/BookingWizard.tsx:364.
+  - Server-side slot compilation and conflict checks occur in app/lib/telemedicine/booking.ts:149-220.
+- Step 3 email blur and returning user check:
+  - handleEmailBlur() at app/book/BookingWizard.tsx:493 queries profiles by email and flips patientType to "returning" when found.
+- Step 3 cookie session autologin/pre-fill:
+  - checkActiveSession() at app/book/BookingWizard.tsx:296 uses supabase.auth.getSession() and pre-fills patient details from appointments/profiles.
+- Step 3 registration path:
+  - registerPatientUser() uses supabaseAdmin.auth.admin.createUser(email_confirm: true) at app/lib/telemedicine/booking.ts:901-910.
+  - This bypasses signup verification emails and creates profile row server-side (app/lib/telemedicine/booking.ts:918-927).
+- Step 4 review/cart:
+  - Review panel renders at app/book/BookingWizard.tsx:1318.
+  - Paystack config is memoized at app/book/BookingWizard.tsx:601-607.
+  - Pending booking insertion starts from handleProceedToSecurePayment() at app/book/BookingWizard.tsx:610-699.
+- Step 5 payment/confirmation:
+  - Paystack success callback calls confirmBooking() at app/book/BookingWizard.tsx:673-679.
+  - DB confirmation update with paystack_ref occurs at app/lib/telemedicine/booking.ts:810-823.
+  - Fintech-style single-card success screen renders at app/book/BookingWizard.tsx:1431-1508.
+
+Schema mapping verifications
+- Clinical notes alias:
+  - Appointment selects correctly alias notes as clinical_notes in:
+    - app/dashboard/page.tsx:97
+    - app/dashboard/appointments/page.tsx:63
+    - app/dashboard/actions.ts:461
+    - app/dashboard/patients/page.tsx:56
+  - No writes to non-existent clinical_notes table found.
+- Payment key naming:
+  - paystack_ref used in confirm update at app/lib/telemedicine/booking.ts:816.
+  - No payment_reference usage found in app/.
+- Pending payment enum usage:
+  - createPendingBooking writes payment_status: 'unpaid' at app/lib/telemedicine/booking.ts:644.
+  - No payment_status='pending' found.
+
+Auth and recovery verifications
+- Dashboard profile self-healing:
+  - createProfileForUser() invoked from layout at app/dashboard/layout.tsx:112.
+  - 23505 duplicate-key race fallback refetch exists at app/dashboard/layout.tsx:122-129.
+- OTP recovery anti-prefetch behavior:
+  - Recovery OTP generated from admin generateLink() in app/login/actions.ts:29-44.
+  - Reset page verifies OTP with verifyOtp(type:'recovery') at app/reset-password/page.tsx:70-74.
+  - Flow does not depend on one-click token_hash in URL, reducing prefetch invalidation risk.
+
+Email dispatch verifications
+- Resend response ID usage:
+  - sendBookingConfirmation logs response.data?.id at app/lib/telemedicine/email.ts:81.
+- Step 3 trigger path:
+  - createPendingBooking() triggers sendWelcomeEmail + sendRegistrationStaffNotification at app/lib/telemedicine/booking.ts:682-688.
+- Step 5 trigger path:
+  - confirmBooking() triggers sendBookingConfirmation + sendStaffNotification at app/lib/telemedicine/booking.ts:830-846.
+
+2) TypeScript and build command results
+
+Executed commands:
+- npx tsc --noEmit
+- npm run build
+
+Result:
+- npx tsc --noEmit: PASS (no output, success exit)
+- npm run build: PASS
+  - Next.js 16.2.6 compiled successfully.
+  - TypeScript stage completed successfully.
+  - Static/dynamic routes generated successfully.
+
+Dependency/import resolution check
+- npm ls lucide-react react-paystack @supabase/supabase-js --depth=0: PASS
+  - @supabase/supabase-js@2.105.4
+  - lucide-react@1.14.0
+  - react-paystack@6.0.0
+
+3) Identified issues
+
+Critical/functional mismatches
+1. New patient immediate login gap after registration
+- Expected by audit instruction: server registration followed by immediate login session.
+- Observed: registerPatientUser() is called, but no guaranteed immediate signInWithPassword call follows in checkout path.
+- File: app/book/BookingWizard.tsx:623-635
+
+2. Step 1 auto-advance timer not present
+- Instruction requested timer-based auto-advance behavior.
+- Observed: direct immediate transition in selectModalityAndAdvance().
+- File: app/book/BookingWizard.tsx:480-491
+
+3. Step 4 payment row styling regression
+- JSX references styles.paymentRow, but CSS class does not exist.
+- CSS still uses broad .paymentCard div selector, which can affect nested layout elements.
+- Files:
+  - app/book/BookingWizard.tsx:1273, 1277, 1282
+  - app/book/book.module.css:637
+
+4. Unused state/dead code in BookingWizard
+- pendingAppointmentId and confirmedMeetLink are set but not rendered/consumed in final UI.
+- File: app/book/BookingWizard.tsx:154-155, usage writes at 668 and 676
+
+5. Profile insertion failure can be silently tolerated after user creation
+- registerPatientUser() logs profile insert error but still returns success.
+- Risk: auth user exists without profile row.
+- File: app/lib/telemedicine/booking.ts:928-932
+
+6. Resend message ID retrieval is inconsistent
+- Requirement requested tracing response.data?.id.
+- Observed: only some paths capture IDs; most send calls ignore response object.
+- File: app/lib/telemedicine/email.ts (multiple send paths)
+
+7. Schema rule conflict detected (amount column)
+- Your instruction requested no writes of amount on appointments.
+- Current repository writes amount in booking inserts:
+  - app/lib/telemedicine/booking.ts:463
+  - app/lib/telemedicine/booking.ts:645
+- Current schema snapshot includes amount column:
+  - supabase/schema.sql:73
+- This indicates a policy/spec mismatch between requested audit rule and current implemented schema.
+
+Code quality findings (strict lint baseline)
+- Focused lint on audited files reports 57 problems (51 errors, 6 warnings).
+- Examples:
+  - no-explicit-any across booking/email/layout/cron files
+  - react-hooks/set-state-in-effect in booking/layout/reset-password
+  - prefer-const and unescaped entity errors in BookingWizard
+
+4) Actionable fixes (replacement diffs)
+
+Fix A - Ensure immediate login after new patient registration
+File: app/book/BookingWizard.tsx
+
+```diff
+@@
+       if (state.patientType === "new" && !loginSuccess) {
+         const reg = await registerPatientUser({
+           email: state.patientDetails.email.toLowerCase().trim(),
+           password: patientPassword,
+           fullName: `${state.patientDetails.firstName} ${state.patientDetails.lastName}`,
+           phone: state.patientDetails.phone,
+         });
+ 
+         if (!reg.success) {
+           setCheckoutError(`Registration failed: ${reg.error}`);
+           setIsSubmitting(false);
+           return;
+         }
++
++        const { error: signInError } = await supabase.auth.signInWithPassword({
++          email: state.patientDetails.email.toLowerCase().trim(),
++          password: patientPassword,
++        });
++        if (signInError) {
++          setCheckoutError(`Registration succeeded, but login failed: ${signInError.message}`);
++          setIsSubmitting(false);
++          return;
++        }
++        setLoginSuccess(true);
+       }
+```
+
+Fix B - Restore stable Step 4 payment row styling contract
+Files:
+- app/book/BookingWizard.tsx
+- app/book/book.module.css
+
+```diff
+*** app/book/BookingWizard.tsx
+@@
+-                  <div>
++                  <div className={styles.paymentRow}>
+                     <span>Consultation Fee</span>
+                     <strong>NGN {price.toLocaleString()}</strong>
+                   </div>
+-                  <div>
++                  <div className={styles.paymentRow}>
+                     <span>Facility Charge</span>
+                     <strong>Included</strong>
+                   </div>
+@@
+-                  <div className={styles.totalRow}>
++                  <div className={`${styles.paymentRow} ${styles.totalRow}`}>
+                     <span>Total Due Today</span>
+                     <strong>NGN {price.toLocaleString()}</strong>
+                   </div>
+```
+
+```diff
+*** app/book/book.module.css
+@@
+-.paymentCard div {
++.paymentRow {
+   align-items: center;
+   display: flex;
+   justify-content: space-between;
+   font-size: 0.95rem;
+ }
+```
+
+Fix C - Fail hard if profile row creation fails in registerPatientUser
+File: app/lib/telemedicine/booking.ts
+
+```diff
+@@
+     if (profileError) {
+       console.error('Error inserting profile during registration:', profileError);
++      return { success: false, error: 'User created but profile creation failed: ' + profileError.message };
+     }
+ 
+     return { success: true, user: data.user };
+```
+
+Fix D - Normalize Resend message ID logging across all email sends
+File: app/lib/telemedicine/email.ts
+
+```diff
+@@
+ import { Resend } from 'resend';
+ import { format } from 'date-fns';
++
++async function sendWithIdLog(
++  resend: Resend,
++  payload: Parameters<Resend['emails']['send']>[0],
++  label: string
++) {
++  const response = await resend.emails.send(payload);
++  console.log(`✅ ${label}:`, response.data?.id);
++  return response;
++}
+```
+
+Then replace each `await resend.emails.send({...})` call with:
+
+```diff
+-await resend.emails.send({ ... })
++await sendWithIdLog(resend, { ... }, 'Descriptive label')
+```
+
+Fix E - Remove `any` catch typing in cron routes
+Files:
+- app/api/cron/cleanup/route.ts
+- app/api/cron/reminders/route.ts
+
+```diff
+@@
+-  } catch (err: any) {
+-    console.error('Unhandled Cron Cleanup Error:', err);
+-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
++  } catch (err: unknown) {
++    const message = err instanceof Error ? err.message : 'Internal server error';
++    console.error('Unhandled Cron Cleanup Error:', err);
++    return NextResponse.json({ error: message }, { status: 500 });
+   }
+```
+
+Notes on schema mismatch to resolve with product owner
+- If amount truly must not exist in appointments, remove writes at app/lib/telemedicine/booking.ts:463 and :645 and migrate to external ledger table.
+- If current schema is canonical, update audit policy text to reflect amount is now an accepted column.
+
+End of report.

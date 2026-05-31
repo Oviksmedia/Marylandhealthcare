@@ -1,0 +1,427 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-family: var(--font-sans), sans-serif;
+  color: var(--text-main);
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.breadcrumbs a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumbs a:hover {
+  color: var(--primary);
+}
+
+.breadcrumbSeparator {
+  color: var(--text-muted);
+}
+
+.breadcrumbActive {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerInfo h1 {
+  font-size: 1.75rem;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.backBtn {
+  background: var(--bg-surface);
+  border: 1px solid oklch(0.78 0.02 193 / 0.15);
+  color: var(--text-main);
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  background: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Form Settings Header Card */
+.configHeaderCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  box-shadow: 
+    0 10px 30px -10px rgba(15, 23, 42, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-left: 0.25rem;
+}
+
+.inputGroup select {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: var(--bg-canvas);
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 14px;
+  font-size: 1rem;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.inputGroup select:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px oklch(0.12 0.04 193 / 0.05);
+}
+
+.timeDurationPicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-canvas);
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 14px;
+  padding: 0.4rem 1rem;
+}
+
+.timeDurationPicker select {
+  border: 0;
+  background: transparent;
+  padding: 0.4rem 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  width: 60px;
+  text-align: center;
+  color: var(--text-main);
+}
+
+.timeDurationPicker select:focus {
+  box-shadow: none;
+}
+
+.durationColon {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Select All Row */
+.selectAllRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-top: 0.5rem;
+}
+
+.checkboxInput {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Day Cards Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.5rem;
+}
+
+.dayCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 
+    0 10px 25px -5px rgba(15, 23, 42, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  transition: all 0.25s ease;
+}
+
+.dayCardInactive {
+  opacity: 0.6;
+  background: oklch(0.98 0.01 193 / 0.4);
+}
+
+.dayCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dayTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dayTitleRow strong {
+  font-size: 1.1rem;
+  text-transform: capitalize;
+  color: var(--primary);
+}
+
+.addBreakBtn {
+  background: transparent;
+  border: 0;
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.addBreakBtn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.timeFieldsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.timeInputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.timeInputLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Summary Banner inside Card */
+.summaryBanner {
+  background: oklch(0.96 0.01 193 / 0.6);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--primary);
+  border: 1px solid oklch(0.12 0.04 193 / 0.04);
+}
+
+.summaryDuration {
+  font-weight: 800;
+}
+
+.summaryTimes {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Breaks Section */
+.breaksSection {
+  border-top: 1px dashed oklch(0.78 0.02 193 / 0.1);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.breaksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.removeBreakBtn {
+  background: transparent;
+  border: 0;
+  color: var(--feedback-error);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.removeBreakBtn:hover {
+  background: var(--badge-error-bg);
+}
+
+.breakRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Action Footer */
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.saveBtn {
+  background: var(--primary);
+  color: white;
+  border: 0;
+  padding: 1.1rem 2.5rem;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 10px 25px -5px oklch(0.12 0.04 193 / 0.25);
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px oklch(0.12 0.04 193 / 0.35);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Toast Alerts */
+.toast {
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4000;
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toastInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 
+    0 10px 30px rgba(15, 23, 42, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.toastSuccess .toastInner {
+  background: oklch(0.96 0.04 155 / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: var(--badge-success-text);
+}
+
+.toastError .toastInner {
+  background: oklch(0.94 0.04 25 / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: var(--badge-error-text);
+}
+
+.toastCloseBtn {
+  background: transparent;
+  border: 0;
+  color: currentColor;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.toastCloseBtn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

@@ -262,3 +262,340 @@
     grid-template-columns: 1fr;
   }
 }
+
+.availabilityCard {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  grid-column: span 2;
+}
+
+.availabilityCard h2 {
+  font-size: 1.35rem;
+  font-family: var(--font-serif);
+  color: var(--primary);
+  margin: 0;
+}
+
+.availabilityCard p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.daySelector {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid oklch(0.78 0.02 193 / 0.1);
+  padding-bottom: 1rem;
+}
+
+.dayTab {
+  background: var(--bg-canvas);
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.15);
+  color: var(--text-main);
+  padding: 0.65rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: all 0.2s ease;
+}
+
+.dayTab:hover {
+  border-color: var(--primary);
+  background: oklch(0.12 0.04 193 / 0.02);
+}
+
+.activeDayTab {
+  background: var(--primary);
+  color: var(--text-inverse);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px -3px oklch(0.12 0.04 193 / 0.3);
+}
+
+.availabilityGridSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.availabilityGridSection h3 {
+  font-size: 1.05rem;
+  color: var(--primary);
+  font-weight: 700;
+  margin: 0;
+}
+
+.slotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.slotToggleChip {
+  background: var(--bg-canvas);
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.1);
+  color: var(--text-main);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.slotToggleChip:hover {
+  border-color: var(--primary);
+  background: oklch(0.12 0.04 193 / 0.02);
+  transform: translateY(-1px);
+}
+
+.activeSlotChip {
+  background: var(--feedback-success);
+  color: white;
+  border-color: var(--feedback-success);
+  font-weight: 700;
+  box-shadow: 0 4px 12px -3px oklch(0.55 0.15 155 / 0.3);
+}
+
+.activeSlotChip:hover {
+  background: oklch(0.50 0.13 155);
+  border-color: oklch(0.50 0.13 155);
+}
+
+.saveAvailBtn {
+  background: var(--primary);
+  color: white;
+  border: 0;
+  padding: 0.9rem 1.75rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.saveAvailBtn:hover {
+  background: oklch(0.18 0.05 193);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px oklch(0.12 0.04 193 / 0.3);
+}
+
+@media (max-width: 768px) {
+  .availabilityCard {
+    grid-column: span 1;
+  }
+}
+
+/* Doctor Sessions Modality in Settings */
+.timeDurationPicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-canvas);
+  border: 1.5px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 14px;
+  padding: 0.4rem 1.25rem;
+  width: 150px;
+  margin-top: 0.5rem;
+}
+
+.timeDurationPicker select {
+  border: 0;
+  background: transparent;
+  padding: 0.4rem 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  width: 60px;
+  text-align: center;
+  color: var(--text-main);
+}
+
+.durationColon {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.selectAllRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin: 1rem 0;
+}
+
+.checkboxInput {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.sessionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.dayCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.78 0.02 193 / 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 
+    0 10px 25px -5px rgba(15, 23, 42, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  transition: all 0.25s ease;
+}
+
+.dayCardInactive {
+  opacity: 0.6;
+  background: oklch(0.98 0.01 193 / 0.4);
+}
+
+.dayCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dayTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dayTitleRow strong {
+  font-size: 1.1rem;
+  text-transform: capitalize;
+  color: var(--primary);
+}
+
+.addBreakBtn {
+  background: transparent;
+  border: 0;
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.addBreakBtn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.timeFieldsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.timeInputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.timeInputLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.summaryBanner {
+  background: oklch(0.96 0.01 193 / 0.6);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--primary);
+  border: 1px solid oklch(0.12 0.04 193 / 0.04);
+}
+
+.summaryDuration {
+  font-weight: 800;
+}
+
+.summaryTimes {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.breaksSection {
+  border-top: 1px dashed oklch(0.78 0.02 193 / 0.1);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.breaksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.removeBreakBtn {
+  background: transparent;
+  border: 0;
+  color: #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.removeBreakBtn:hover {
+  background: #fee2e2;
+}
+
+.breakRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+

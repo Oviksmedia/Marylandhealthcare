@@ -8,41 +8,214 @@ import { supabase } from '../supabase';
 import { PRICING_CONSTANTS } from './pricing';
 import { rateLimit } from '../rateLimit';
 
-export async function getBookedSlots(date: string): Promise<string[]> {
-  try {
-    // 1. Calculate date ranges strictly in the target Lagos (UTC+1) timezone,
-    // making the query completely environment-independent (running identical on any server globally)
-    const [year, month, day] = date.split('-').map(Number);
+function slotToIsoString(dateStr: string, slot: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const [time, ampm] = slot.split(' ');
+  let [hours, minutes] = time.split(':').map(Number);
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+  
+  // Lagos WAT is UTC+1. So we subtract 1 hour to get UTC time.
+  const utcHours = hours - 1;
+  const dateObj = new Date(Date.UTC(year, month - 1, day, utcHours, minutes, 0, 0));
+  return dateObj.toISOString();
+}
 
-    // Start of Lagos day in UTC (00:00 WAT = 23:00 previous day UTC)
+function mapServiceToSpecialty(service: string | null | undefined): string | null {
+  if (!service) return null;
+  const s = service.trim();
+  if (s === "General Practice" || s === "General Medicine") return "General Practice";
+  if (s === "Mental Health") return "Mental Health";
+  if (s === "Pediatrics" || s === "Child Health") return "Pediatrics";
+  if (s === "Maternity & Childbirth" || s === "Maternity & Prenatal" || s === "Obstetrics") return "Obstetrics";
+  if (s === "Internal Medicine") return "Internal Medicine";
+  if (s === "Diagnostic Laboratory") return "Diagnostic Laboratory";
+  return s;
+}
+
+async function getActiveDoctorsList(specialty?: string | null): Promise<any[]> {
+  if (!supabaseAdmin) return [];
+  
+  const resolvedSpecialty = specialty ? mapServiceToSpecialty(specialty) : null;
+
+  // Attempt 1: Query with is_active filter
+  let query1 = supabaseAdmin
+    .from('profiles')
+    .select('id, availability, specialty')
+    .eq('role', 'doctor')
+    .eq('is_active', true)
+    .is('deleted_at', null);
+  
+  if (resolvedSpecialty) {
+    query1 = query1.eq('specialty', resolvedSpecialty);
+  }
+  
+  const { data, error } = await query1;
+  if (!error) return data || [];
+
+  // Attempt 2 Fallback: If is_active doesn't exist, omit it from the query entirely
+  if (error.message.includes('is_active') || error.code === 'PGRST100' || error.message.includes('column')) {
+    console.warn("is_active column is missing in Supabase. Falling back to default query.");
+    let query2 = supabaseAdmin
+      .from('profiles')
+      .select('id, availability, specialty')
+      .eq('role', 'doctor')
+      .is('deleted_at', null);
+      
+    if (resolvedSpecialty) {
+      query2 = query2.eq('specialty', resolvedSpecialty);
+    }
+    const { data: fallbackData, error: fallbackError } = await query2;
+    if (fallbackError) {
+      console.error("Fallback doctor query failed:", fallbackError);
+      return [];
+    }
+    return fallbackData || [];
+  }
+  
+  console.error("Doctor query failed:", error);
+  return [];
+}
+
+async function findFreeDoctorForSlot(scheduledAtIso: string, specialty: string | null): Promise<string | null> {
+  if (!supabaseAdmin) return null;
+
+  const dateObj = new Date(scheduledAtIso);
+  // Aligns to Lagos time to find day of week
+  const lagosTime = new Date(dateObj.getTime() + 1 * 60 * 60 * 1000);
+  const dayOfWeek = format(lagosTime, 'eeee').toLowerCase(); // e.g. 'monday'
+
+  // Format to WAT slot representation: e.g. "09:30 AM"
+  let hours = lagosTime.getUTCHours();
+  const minutes = lagosTime.getUTCMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+  const hoursStr = hours < 10 ? "0" + hours : hours;
+  const slotLabel = `${hoursStr}:${minutesStr} ${ampm}`;
+
+  // 1. Fetch active, non-deleted doctors of this specialty via self-healing query
+  const doctors = await getActiveDoctorsList(specialty);
+  if (!doctors || doctors.length === 0) {
+    return null;
+  }
+
+  // 2. Fetch conflicting appointments at this exact time
+  const { data: conflicts, error: conflictError } = await supabaseAdmin
+    .from('appointments')
+    .select('doctor_id, status, created_at')
+    .eq('scheduled_at', scheduledAtIso)
+    .neq('status', 'cancelled');
+
+  if (conflictError) {
+    console.error('Error fetching conflicts for auto-assign:', conflictError);
+  }
+
+  const activeConflicts = (conflicts || []).filter((apt: any) => {
+    if (apt.status === 'confirmed') return true;
+    if (apt.status === 'pending') {
+      const createdAtTime = new Date(apt.created_at).getTime();
+      const tenMinsAgo = Date.now() - 10 * 60 * 1000;
+      return createdAtTime > tenMinsAgo;
+    }
+    return false;
+  });
+
+  // 3. Find the first doctor who is scheduled for this slot and has no conflicts
+  for (const doc of doctors) {
+    const avail = (doc.availability as any) || {};
+    const slotsForDay = avail[dayOfWeek] || [];
+    const isScheduled = slotsForDay.includes(slotLabel);
+    if (!isScheduled) continue;
+
+    const hasConflict = activeConflicts.some((apt: any) => apt.doctor_id === doc.id);
+    if (!hasConflict) {
+      return doc.id;
+    }
+  }
+
+  return null;
+}
+
+function slotLabelToMinutes(label: string): number {
+  const [time, ampm] = label.split(' ');
+  let [hours, minutes] = time.split(':').map(Number);
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
+
+export async function getDaySlots(date: string, specialty?: string | null): Promise<{ allSlots: string[], bookedSlots: string[] }> {
+  try {
+    const [year, month, day] = date.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    const dayOfWeek = format(dateObj, 'eeee').toLowerCase();
+
+    const doctors = await getActiveDoctorsList(specialty);
+
+    const slotSet = new Set<string>();
+    if (doctors && doctors.length > 0) {
+      for (const doc of doctors) {
+        const avail = (doc.availability as any) || {};
+        const slotsForDay: string[] = avail[dayOfWeek] || [];
+        slotsForDay.forEach(slot => slotSet.add(slot));
+      }
+    }
+
+    const allSlots = Array.from(slotSet).sort((a, b) => slotLabelToMinutes(a) - slotLabelToMinutes(b));
+
+    if (!doctors || doctors.length === 0 || allSlots.length === 0) {
+      return { allSlots: [], bookedSlots: [] };
+    }
+
     const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
     startOfDay.setUTCHours(startOfDay.getUTCHours() - 1);
-
-    // End of Lagos day in UTC (23:59:59.999 WAT = 22:59 same day UTC)
     const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
     endOfDay.setUTCHours(endOfDay.getUTCHours() - 1);
 
-    // 2. Query using supabaseAdmin client to bypass Row-Level Security (RLS) constraints.
-    // Anonymous public client queries would be blocked by RLS policies on the appointments table,
-    // resulting in an empty [] response, leaving slots incorrectly showing as open in the UI.
-    // Secure because we only select 'scheduled_at' - exposing no patient details.
-    const { data, error } = await supabaseAdmin
+    const { data: appointments, error: aptError } = await supabaseAdmin
       .from('appointments')
-      .select('scheduled_at')
+      .select('scheduled_at, status, created_at, doctor_id')
       .gte('scheduled_at', startOfDay.toISOString())
       .lte('scheduled_at', endOfDay.toISOString())
       .neq('status', 'cancelled');
 
-    if (error) {
-      console.error('Error fetching booked slots:', error);
-      throw new Error(`Failed to fetch booked slots: ${error.message}`);
+    if (aptError) {
+      console.error('Error fetching appointments for getDaySlots:', aptError);
+      throw new Error(`Failed to fetch appointments: ${aptError.message}`);
     }
 
-    // Return raw ISO timestamps — the client will format them
-    // in its own timezone so they match the UI slot labels
-    return ((data || []) as { scheduled_at: string }[]).map(apt => apt.scheduled_at);
+    const isActive = (apt: any) => {
+      if (apt.status === 'confirmed') return true;
+      if (apt.status === 'pending') {
+        const created = new Date(apt.created_at).getTime();
+        return created > Date.now() - 10 * 60 * 1000;
+      }
+      return false;
+    };
+
+    const bookedSlots: string[] = [];
+    for (const slot of allSlots) {
+      const slotIso = slotToIsoString(date, slot);
+      let anyFree = false;
+      for (const doc of doctors) {
+        const avail = (doc.availability as any) || {};
+        const slotsForDay = avail[dayOfWeek] || [];
+        if (!slotsForDay.includes(slot)) continue;
+        const conflict = (appointments || []).some((apt: any) =>
+          apt.doctor_id === doc.id &&
+          new Date(apt.scheduled_at).getTime() === new Date(slotIso).getTime() &&
+          isActive(apt)
+        );
+        if (!conflict) { anyFree = true; break; }
+      }
+      if (!anyFree) bookedSlots.push(slot);
+    }
+
+    return { allSlots, bookedSlots };
   } catch (error) {
-    console.error('Error in getBookedSlots:', error);
+    console.error('Error in getDaySlots:', error);
     throw error;
   }
 }
@@ -217,36 +390,38 @@ export async function submitBooking(bookingData: {
     const startTime = scheduledDate;
     const endTime = addMinutes(startTime, 30); // Default 30 min duration
 
-    // Timezone bounds and slot checking
-    const minutes = startTime.getUTCMinutes();
-    if (minutes !== 0 && minutes !== 30) {
-      return { success: false, error: 'Invalid slot selection. Appointments must align to 30-minute boundaries.' };
-    }
-
-    // Double-Booking Check (Transaction/Insert guard)
-    const { data: existingSlots, error: checkError } = await supabaseAdmin
-      .from('appointments')
-      .select('id, status, created_at')
-      .eq('scheduled_at', startTime.toISOString())
-      .neq('status', 'cancelled');
-
-    if (checkError) {
-      console.error('Database slot check error:', checkError);
-      return { success: false, error: 'Failed to verify slot availability.' };
-    }
-
-    const isOccupied = existingSlots && existingSlots.some((apt: { status: string; created_at: string }) => {
-      if (apt.status === 'confirmed') return true;
-      if (apt.status === 'pending') {
-        const createdAtTime = new Date(apt.created_at).getTime();
-        const tenMinsAgo = Date.now() - 10 * 60 * 1000;
-        return createdAtTime > tenMinsAgo;
+    // Timezone bounds and slot checking (only for telemedicine)
+    if (bookingData.type === 'telemedicine') {
+      const minutes = startTime.getUTCMinutes();
+      if (minutes % 5 !== 0) {
+        return { success: false, error: 'Invalid slot selection. Appointments must align to 5-minute boundaries.' };
       }
-      return false;
-    });
 
-    if (isOccupied) {
-      return { success: false, error: 'This time slot is no longer available. Please select another time.' };
+      // Double-Booking Check (Transaction/Insert guard)
+      const { data: existingSlots, error: checkError } = await supabaseAdmin
+        .from('appointments')
+        .select('id, status, created_at')
+        .eq('scheduled_at', startTime.toISOString())
+        .neq('status', 'cancelled');
+
+      if (checkError) {
+        console.error('Database slot check error:', checkError);
+        return { success: false, error: 'Failed to verify slot availability.' };
+      }
+
+      const isOccupied = existingSlots && existingSlots.some((apt: { status: string; created_at: string }) => {
+        if (apt.status === 'confirmed') return true;
+        if (apt.status === 'pending') {
+          const createdAtTime = new Date(apt.created_at).getTime();
+          const tenMinsAgo = Date.now() - 10 * 60 * 1000;
+          return createdAtTime > tenMinsAgo;
+        }
+        return false;
+      });
+
+      if (isOccupied) {
+        return { success: false, error: 'This time slot is no longer available. Please select another time.' };
+      }
     }
 
     // 3. Handle Google Meet / Jitsi for Telemedicine
@@ -270,27 +445,53 @@ export async function submitBooking(bookingData: {
       .maybeSingle();
     if (patientProfile) patientId = patientProfile.id;
 
-    // 4. Save Appointment to Supabase
-    const { data, error } = await supabaseAdmin
+    // Find and assign available doctor dynamically
+    const doctorId = await findFreeDoctorForSlot(startTime.toISOString(), bookingData.service || null);
+
+    // 4. Save Appointment to Supabase with self-healing schema fallback
+    const insertPayload: any = {
+      patient_id: patientId,
+      doctor_id: doctorId,
+      patient_name: sanitizeInput(bookingData.patientName),
+      patient_email: bookingData.patientEmail.toLowerCase().trim(),
+      patient_phone: sanitizeInput(bookingData.patientPhone),
+      type: bookingData.type,
+      service: bookingData.service || null,
+      scheduled_at: startTime.toISOString(),
+      meet_link: meetLink,
+      notes: sanitizeInput(bookingData.description),
+      status: 'confirmed',
+      payment_status: paymentStatus,
+      amount: secureAmount,
+      consent_agreed_at: bookingData.consentAgreedAt || null,
+      is_follow_up: resolvedIsFollowUp,
+      parent_appointment_id: resolvedParentId
+    };
+
+    let { data, error } = await supabaseAdmin
       .from('appointments')
-      .insert([{
-        patient_id: patientId,
-        patient_name: sanitizeInput(bookingData.patientName),
-        patient_email: bookingData.patientEmail.toLowerCase().trim(),
-        patient_phone: sanitizeInput(bookingData.patientPhone),
-        type: bookingData.type,
-        scheduled_at: startTime.toISOString(),
-        meet_link: meetLink,
-        notes: sanitizeInput(bookingData.description),
-        status: 'confirmed',
-        payment_status: paymentStatus,
-        amount: secureAmount,
-        consent_agreed_at: bookingData.consentAgreedAt || null,
-        is_follow_up: resolvedIsFollowUp,
-        parent_appointment_id: resolvedParentId
-      }])
+      .insert([insertPayload])
       .select()
       .single();
+
+    if (error && (error.message.includes('service') || error.message.includes('schema cache') || error.code === 'PGRST100')) {
+      console.warn("Appointments table is missing 'service' column. Retrying insert with self-healing fallback.");
+      const originalDesc = bookingData.description || '';
+      const fallbackDesc = `Service: ${bookingData.service || 'General Practice'} | Reason: ${originalDesc}`;
+      
+      delete insertPayload.service;
+      insertPayload.description = fallbackDesc;
+      insertPayload.notes = fallbackDesc;
+      
+      const retryResult = await supabaseAdmin
+        .from('appointments')
+        .insert([insertPayload])
+        .select()
+        .single();
+        
+      data = retryResult.data;
+      error = retryResult.error;
+    }
 
     if (error) {
       console.error('Supabase Insert Error:', error);
@@ -315,8 +516,9 @@ export async function submitBooking(bookingData: {
       sanitizeInput(bookingData.patientPhone),
       bookingData.type,
       startTime.toISOString(),
-      bookingData.description || '',
-      meetLink
+      bookingData.service || 'General Consultation',
+      meetLink,
+      bookingData.description
     );
 
     return {
@@ -373,36 +575,38 @@ export async function createPendingBooking(bookingData: {
 
     const startTime = scheduledDate;
 
-    // Timezone bounds and slot checking
-    const minutes = startTime.getUTCMinutes();
-    if (minutes !== 0 && minutes !== 30) {
-      return { success: false, error: 'Invalid slot selection. Appointments must align to 30-minute boundaries.' };
-    }
-
-    // Double-Booking Check (Transaction/Insert guard)
-    const { data: existingSlots, error: checkError } = await supabaseAdmin
-      .from('appointments')
-      .select('id, status, created_at')
-      .eq('scheduled_at', startTime.toISOString())
-      .neq('status', 'cancelled');
-
-    if (checkError) {
-      console.error('Database slot check error:', checkError);
-      return { success: false, error: 'Failed to verify slot availability.' };
-    }
-
-    const isOccupied = existingSlots && existingSlots.some((apt: { status: string; created_at: string }) => {
-      if (apt.status === 'confirmed') return true;
-      if (apt.status === 'pending') {
-        const createdAtTime = new Date(apt.created_at).getTime();
-        const tenMinsAgo = Date.now() - 10 * 60 * 1000;
-        return createdAtTime > tenMinsAgo;
+    // Timezone bounds and slot checking (only for telemedicine)
+    if (bookingData.type === 'telemedicine') {
+      const minutes = startTime.getUTCMinutes();
+      if (minutes % 5 !== 0) {
+        return { success: false, error: 'Invalid slot selection. Appointments must align to 5-minute boundaries.' };
       }
-      return false;
-    });
 
-    if (isOccupied) {
-      return { success: false, error: 'This time slot is no longer available. Please select another time.' };
+      // Double-Booking Check (Transaction/Insert guard)
+      const { data: existingSlots, error: checkError } = await supabaseAdmin
+        .from('appointments')
+        .select('id, status, created_at')
+        .eq('scheduled_at', startTime.toISOString())
+        .neq('status', 'cancelled');
+
+      if (checkError) {
+        console.error('Database slot check error:', checkError);
+        return { success: false, error: 'Failed to verify slot availability.' };
+      }
+
+      const isOccupied = existingSlots && existingSlots.some((apt: { status: string; created_at: string }) => {
+        if (apt.status === 'confirmed') return true;
+        if (apt.status === 'pending') {
+          const createdAtTime = new Date(apt.created_at).getTime();
+          const tenMinsAgo = Date.now() - 10 * 60 * 1000;
+          return createdAtTime > tenMinsAgo;
+        }
+        return false;
+      });
+
+      if (isOccupied) {
+        return { success: false, error: 'This time slot is no longer available. Please select another time.' };
+      }
     }
 
     // Validate follow-up parameters strictly on the server for security
@@ -427,26 +631,52 @@ export async function createPendingBooking(bookingData: {
       .maybeSingle();
     if (patientProfile) patientId = patientProfile.id;
 
-    // Save Pending Appointment to Supabase
-    const { data, error } = await supabaseAdmin
+    // Find and assign available doctor dynamically
+    const doctorId = await findFreeDoctorForSlot(startTime.toISOString(), bookingData.service || null);
+
+    // Save Pending Appointment to Supabase with self-healing schema fallback
+    const insertPayload: any = {
+      patient_id: patientId,
+      doctor_id: doctorId,
+      patient_name: sanitizeInput(bookingData.patientName),
+      patient_email: bookingData.patientEmail.toLowerCase().trim(),
+      patient_phone: sanitizeInput(bookingData.patientPhone),
+      type: bookingData.type,
+      service: bookingData.service || null,
+      scheduled_at: startTime.toISOString(),
+      notes: sanitizeInput(bookingData.description),
+      status: 'pending',
+      payment_status: 'unpaid',
+      amount: secureAmount,
+      consent_agreed_at: bookingData.consentAgreedAt ? new Date().toISOString() : null,
+      is_follow_up: resolvedIsFollowUp,
+      parent_appointment_id: resolvedParentId
+    };
+
+    let { data, error } = await supabaseAdmin
       .from('appointments')
-      .insert([{
-        patient_id: patientId,
-        patient_name: sanitizeInput(bookingData.patientName),
-        patient_email: bookingData.patientEmail.toLowerCase().trim(),
-        patient_phone: sanitizeInput(bookingData.patientPhone),
-        type: bookingData.type,
-        scheduled_at: startTime.toISOString(),
-        notes: sanitizeInput(bookingData.description),
-        status: 'pending',
-        payment_status: 'unpaid',
-        amount: secureAmount,
-        consent_agreed_at: bookingData.consentAgreedAt ? new Date().toISOString() : null,
-        is_follow_up: resolvedIsFollowUp,
-        parent_appointment_id: resolvedParentId
-      }])
+      .insert([insertPayload])
       .select()
       .single();
+
+    if (error && (error.message.includes('service') || error.message.includes('schema cache') || error.code === 'PGRST100')) {
+      console.warn("Appointments table is missing 'service' column. Retrying pending insert with self-healing fallback.");
+      const originalDesc = bookingData.description || '';
+      const fallbackDesc = `Service: ${bookingData.service || 'General Practice'} | Reason: ${originalDesc}`;
+      
+      delete insertPayload.service;
+      insertPayload.description = fallbackDesc;
+      insertPayload.notes = fallbackDesc;
+      
+      const retryResult = await supabaseAdmin
+        .from('appointments')
+        .insert([insertPayload])
+        .select()
+        .single();
+        
+      data = retryResult.data;
+      error = retryResult.error;
+    }
 
     if (error) {
       console.error('Supabase Pending Insert Error:', error);
@@ -514,21 +744,23 @@ export async function confirmBooking(
       return { success: true, meetLink: appointment.meet_link };
     }
 
-    // Double-Booking Race Condition check during confirmation
-    const { data: otherConfirmed, error: otherCheckError } = await supabaseAdmin
-      .from('appointments')
-      .select('id')
-      .eq('scheduled_at', appointment.scheduled_at)
-      .eq('status', 'confirmed')
-      .neq('id', appointmentId)
-      .limit(1);
+    // Double-Booking Race Condition check during confirmation (only for telemedicine)
+    if (appointment.type === 'telemedicine') {
+      const { data: otherConfirmed, error: otherCheckError } = await supabaseAdmin
+        .from('appointments')
+        .select('id')
+        .eq('scheduled_at', appointment.scheduled_at)
+        .eq('status', 'confirmed')
+        .neq('id', appointmentId)
+        .limit(1);
 
-    if (otherCheckError) {
-      console.error('Check other confirmed error:', otherCheckError);
-    }
+      if (otherCheckError) {
+        console.error('Check other confirmed error:', otherCheckError);
+      }
 
-    if (otherConfirmed && otherConfirmed.length > 0) {
-      return { success: false, error: 'This time slot is no longer available. Another patient has confirmed this booking.' };
+      if (otherConfirmed && otherConfirmed.length > 0) {
+        return { success: false, error: 'This time slot is no longer available. Another patient has confirmed this booking.' };
+      }
     }
 
     let paymentStatus = appointment.payment_status;
@@ -568,11 +800,25 @@ export async function confirmBooking(
       meetLink = meetResult.meetLink;
     }
 
+    // Self-healing doctor assignment on confirmation if missing
+    let doctorId = appointment.doctor_id;
+    if (!doctorId) {
+      const specialty = mapServiceToSpecialty(appointment.service);
+      if (specialty) {
+        doctorId = await findFreeDoctorForSlot(appointment.scheduled_at, specialty);
+      }
+      if (!doctorId) {
+        // Fallback to General Practice if no specialty matched or no doctor found
+        doctorId = await findFreeDoctorForSlot(appointment.scheduled_at, 'General Practice');
+      }
+    }
+
     // 4. Update the appointment to confirmed
     const { data, error: updateError } = await supabaseAdmin
       .from('appointments')
       .update({
         status: 'confirmed',
+        doctor_id: doctorId,
         payment_status: paymentStatus,
         paystack_ref: paymentReference || null,
         meet_link: meetLink,
@@ -602,8 +848,9 @@ export async function confirmBooking(
       sanitizeInput(appointment.patient_phone),
       appointment.type,
       appointment.scheduled_at,
-      appointment.notes,
-      meetLink
+      appointment.service,
+      meetLink,
+      appointment.description
     );
 
     return {
@@ -688,6 +935,7 @@ export async function registerPatientUser(userData: {
 
     if (profileError) {
       console.error('Error inserting profile during registration:', profileError);
+      return { success: false, error: 'Account created but profile setup failed. Please try logging in — your account will be configured automatically.' };
     }
 
     return { success: true, user: data.user };

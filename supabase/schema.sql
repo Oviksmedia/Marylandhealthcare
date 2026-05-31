@@ -20,7 +20,27 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   specialty TEXT, -- Defined for role='doctor' (e.g., 'General Practice', 'Mental Health')
   created_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ, -- For NDPA-compliant soft deletion
+  is_active BOOLEAN DEFAULT TRUE, -- Doctor suspension flag: FALSE = cannot log in, all data preserved
   updated_at TIMESTAMPTZ DEFAULT NOW(), -- Autoupdated timestamp
+  availability JSONB DEFAULT '{
+    "monday": ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+    "tuesday": ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+    "wednesday": ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+    "thursday": ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"],
+    "friday": ["08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM"]
+  }'::jsonb,
+  sessions_config JSONB DEFAULT '{
+    "slotDuration": 30,
+    "days": {
+      "monday": { "active": true, "start": "09:00", "end": "18:00", "breaks": [{ "start": "13:00", "end": "14:00" }] },
+      "tuesday": { "active": true, "start": "09:00", "end": "18:00", "breaks": [{ "start": "13:00", "end": "14:00" }] },
+      "wednesday": { "active": true, "start": "09:00", "end": "18:00", "breaks": [{ "start": "13:00", "end": "14:00" }] },
+      "thursday": { "active": true, "start": "09:00", "end": "18:00", "breaks": [{ "start": "13:00", "end": "14:00" }] },
+      "friday": { "active": true, "start": "09:00", "end": "18:00", "breaks": [{ "start": "13:00", "end": "14:00" }] },
+      "saturday": { "active": false, "start": "09:00", "end": "18:00", "breaks": [] },
+      "sunday": { "active": false, "start": "09:00", "end": "18:00", "breaks": [] }
+    }
+  }'::jsonb,
   CONSTRAINT check_profile_role CHECK (role IN ('patient', 'doctor', 'receptionist', 'admin'))
 );
 
@@ -28,6 +48,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles(role);
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON public.profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_deleted_at ON public.profiles(deleted_at) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_profiles_is_active ON public.profiles(is_active) WHERE is_active = FALSE;
 
 -- Enable Row-Level Security (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -44,6 +65,7 @@ CREATE TABLE IF NOT EXISTS public.appointments (
   patient_email TEXT NOT NULL,
   patient_phone TEXT NOT NULL,
   type TEXT NOT NULL, -- Options: 'telemedicine', 'in_clinic'
+  service TEXT, -- Booked service name (e.g. 'General Practice', 'Mental Health')
   status TEXT NOT NULL DEFAULT 'pending', -- Options: 'pending', 'confirmed', 'completed', 'cancelled'
   scheduled_at TIMESTAMPTZ NOT NULL,
   meet_link TEXT, -- Jitsi or Google Meet rooms
