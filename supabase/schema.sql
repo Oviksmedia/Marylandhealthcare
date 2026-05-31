@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS public.appointments (
   scheduled_at TIMESTAMPTZ NOT NULL,
   meet_link TEXT, -- Jitsi or Google Meet rooms
   notes TEXT, -- Clinical/encounter diagnostics
+  doctor_notes TEXT, -- Professional encounter details & diagnostics
   amount NUMERIC DEFAULT 0.00,
   payment_status TEXT NOT NULL DEFAULT 'unpaid', -- Options: 'paid', 'unpaid'
   paystack_ref TEXT,

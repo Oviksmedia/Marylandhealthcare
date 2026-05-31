@@ -35,6 +35,7 @@ export default function DashboardOverview() {
   // Details Panel State
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedAptDetails, setSelectedAptDetails] = useState<any>(null);
+  const [notesText, setNotesText] = useState("");
   const [patientHistory, setPatientHistory] = useState<any[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
 
@@ -51,6 +52,18 @@ export default function DashboardOverview() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  // Sync selected appointment details to the notesText editing state
+  useEffect(() => {
+    if (selectedAptDetails) {
+      // Legacy fallback: default to the stripped notes column if doctor_notes is empty and status is completed
+      const initialNotes = selectedAptDetails.doctor_notes || 
+        (selectedAptDetails.status === 'completed' ? stripSystemMetadata(selectedAptDetails.clinical_notes) : "");
+      setNotesText(initialNotes);
+    } else {
+      setNotesText("");
+    }
+  }, [selectedAptDetails]);
 
   async function loadDashboardData() {
     let activeUser = null;
@@ -165,15 +178,18 @@ export default function DashboardOverview() {
     if (!selectedAptDetails) return;
     setIsUpdating(true);
 
-    const result = await saveClinicalNotes(selectedAptDetails.id, selectedAptDetails.clinical_notes || "");
+    const result = await saveClinicalNotes(selectedAptDetails.id, notesText);
 
     if (!result.success) {
       setToast({ message: "Error saving notes: " + result.error, type: 'error' });
     } else {
       setToast({ message: "Medical records updated successfully.", type: 'success' });
-      // No need to close panel, just update local state
+      
+      const updatedApt = { ...selectedAptDetails, doctor_notes: notesText };
+      setSelectedAptDetails(updatedApt);
+
       setAppointments(appointments.map(a =>
-        a.id === selectedAptDetails.id ? { ...a, clinical_notes: selectedAptDetails.clinical_notes } : a
+        a.id === selectedAptDetails.id ? { ...a, doctor_notes: notesText } : a
       ));
     }
     setIsUpdating(false);
@@ -423,8 +439,8 @@ export default function DashboardOverview() {
                   <textarea 
                     className={styles.notesInput}
                     placeholder="Enter diagnosis, prescriptions, or follow-up notes..."
-                    value={stripSystemMetadata(selectedAptDetails?.clinical_notes) || ""}
-                    onChange={(e) => setSelectedAptDetails({ ...selectedAptDetails, clinical_notes: e.target.value })}
+                    value={notesText}
+                    onChange={(e) => setNotesText(e.target.value)}
                     rows={6}
                   />
                   <button 
@@ -474,7 +490,7 @@ export default function DashboardOverview() {
                           <strong>{new Date(history.scheduled_at).toLocaleDateString()}</strong>
                           <span>{history.type === 'telemedicine' ? 'Virtual' : 'Clinic'}</span>
                         </div>
-                        <p>{stripSystemMetadata(history.clinical_notes) || "No notes recorded."}</p>
+                        <p>{stripSystemMetadata(history.doctor_notes || history.clinical_notes) || "No notes recorded."}</p>
                       </div>
                     ))}
                     {patientHistory.length === 0 && (

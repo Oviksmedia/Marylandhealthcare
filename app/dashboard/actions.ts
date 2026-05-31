@@ -137,7 +137,7 @@ export async function saveClinicalNotes(appointmentId: string, notes: string) {
 
   const { error } = await supabaseAdmin
     .from('appointments')
-    .update({ notes: notes })
+    .update({ doctor_notes: notes })
     .eq('id', appointmentId)
 
   if (error) {

@@ -42,6 +42,7 @@ export default function AppointmentsPage() {
   // Details Panel State
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedAptDetails, setSelectedAptDetails] = useState<any>(null);
+  const [notesText, setNotesText] = useState("");
   const [patientHistory, setPatientHistory] = useState<any[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -55,6 +56,18 @@ export default function AppointmentsPage() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  // Sync selected appointment details to the notesText editing state
+  useEffect(() => {
+    if (selectedAptDetails) {
+      // Legacy fallback: default to the stripped notes column if doctor_notes is empty and status is completed
+      const initialNotes = selectedAptDetails.doctor_notes || 
+        (selectedAptDetails.status === 'completed' ? stripSystemMetadata(selectedAptDetails.clinical_notes) : "");
+      setNotesText(initialNotes);
+    } else {
+      setNotesText("");
+    }
+  }, [selectedAptDetails]);
 
   async function loadData() {
     setIsLoading(true);
@@ -114,13 +127,16 @@ export default function AppointmentsPage() {
     if (!selectedAptDetails) return;
     setIsUpdating(true);
 
-    const result = await saveClinicalNotes(selectedAptDetails.id, selectedAptDetails.clinical_notes || "");
+    const result = await saveClinicalNotes(selectedAptDetails.id, notesText);
 
     if (!result.success) {
       setToast({ message: "Error saving notes: " + result.error, type: 'error' });
     } else {
+      const updatedApt = { ...selectedAptDetails, doctor_notes: notesText };
+      setSelectedAptDetails(updatedApt);
+
       setAppointments(appointments.map(a =>
-        a.id === selectedAptDetails.id ? { ...a, clinical_notes: selectedAptDetails.clinical_notes } : a
+        a.id === selectedAptDetails.id ? { ...a, doctor_notes: notesText } : a
       ));
       setToast({ message: "Clinical notes updated successfully!", type: 'success' });
     }
@@ -417,8 +433,8 @@ export default function AppointmentsPage() {
                 <textarea 
                   className={styles.notesInput}
                   placeholder="Enter medical diagnostics, prescriptions, dosage, and follow-up directives..."
-                  value={stripSystemMetadata(selectedAptDetails?.clinical_notes) || ""}
-                  onChange={(e) => setSelectedAptDetails({ ...selectedAptDetails, clinical_notes: e.target.value })}
+                  value={notesText}
+                  onChange={(e) => setNotesText(e.target.value)}
                   rows={6}
                 />
                 <button 
@@ -459,7 +475,7 @@ export default function AppointmentsPage() {
                           <strong>{new Date(history.scheduled_at).toLocaleDateString()}</strong>
                           <span>{history.type === 'telemedicine' ? 'Virtual' : 'Clinic'}</span>
                         </div>
-                        <p>{stripSystemMetadata(history.clinical_notes) || "No notes recorded."}</p>
+                        <p>{stripSystemMetadata(history.doctor_notes || history.clinical_notes) || "No notes recorded."}</p>
                       </div>
                     ))}
                     {patientHistory.filter(h => h.id !== selectedAptDetails.id).length === 0 && (
