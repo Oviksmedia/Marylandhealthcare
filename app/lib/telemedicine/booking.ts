@@ -871,6 +871,39 @@ function isValidPassword(password: string): boolean {
   return password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
 }
 
+export async function checkEmailExists(email: string): Promise<{ exists: boolean }> {
+  if (!email || !email.includes('@')) return { exists: false };
+  
+  try {
+    if (!supabaseAdmin) return { exists: false };
+    
+    const emailNormalized = email.toLowerCase().trim();
+    
+    // 1. Check profiles table first (direct indexed lookup)
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('email', emailNormalized)
+      .maybeSingle();
+      
+    if (profile) {
+      return { exists: true };
+    }
+    
+    // 2. Check auth list just in case
+    const { data: listData } = await supabaseAdmin.auth.admin.listUsers();
+    const existingUser = listData?.users?.find((u: any) => u.email?.toLowerCase().trim() === emailNormalized);
+    if (existingUser) {
+      return { exists: true };
+    }
+    
+    return { exists: false };
+  } catch (err) {
+    console.error('Error checking email existence:', err);
+    return { exists: false };
+  }
+}
+
 export async function registerPatientUser(userData: {
   email: string;
   password?: string;
@@ -895,7 +928,18 @@ export async function registerPatientUser(userData: {
 
     const emailNormalized = userData.email.toLowerCase().trim();
 
-    // Check if user already exists in auth to avoid duplicate errors
+    // Fail hard if the user already has a profile registered
+    const { data: existingProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('email', emailNormalized)
+      .maybeSingle();
+
+    if (existingProfile) {
+      return { success: false, error: 'This email address is already registered. Please click "Returning Patient" and log in to proceed.' };
+    }
+
+    // Fail hard if the user already exists in auth to prevent duplicates and false sign-ups
     const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
     if (listError) {
       console.error('Error listing users:', listError);
@@ -903,7 +947,7 @@ export async function registerPatientUser(userData: {
     const existingUser = listData?.users?.find((u: any) => u.email?.toLowerCase().trim() === emailNormalized);
     
     if (existingUser) {
-      return { success: true, user: existingUser, alreadyExists: true };
+      return { success: false, error: 'This email address is already registered. Please click "Returning Patient" and log in to proceed.' };
     }
 
     const { data, error } = await supabaseAdmin.auth.admin.createUser({

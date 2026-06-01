@@ -36,7 +36,8 @@ import {
   createPendingBooking,
   confirmBooking,
   registerPatientUser,
-  checkFollowUpEligibility
+  checkFollowUpEligibility,
+  checkEmailExists
 } from "@/app/lib/telemedicine/booking";
 import { getSupabaseBrowserClient } from "@/app/lib/supabase";
 import { format } from "date-fns";
@@ -508,13 +509,10 @@ export default function BookingWizard() {
 
     try {
       setIsCheckingFollowUp(true);
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", email)
-        .limit(1);
-
-      if (profile && profile.length > 0) {
+      
+      // Invoke the secure server-side check to bypass client-side RLS constraints
+      const emailCheck = await checkEmailExists(email);
+      if (emailCheck.exists) {
         setState(curr => ({ ...curr, patientType: "returning" }));
       }
 
