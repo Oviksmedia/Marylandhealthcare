@@ -41,14 +41,8 @@ export default function LoginPage() {
       if (authError) throw authError;
 
       if (data?.user) {
-        // Fetch the user's role from the profile table to redirect directly
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        const role = profile?.role || data.user.user_metadata?.role || 'patient';
+        // Use session role metadata directly to avoid client-side RLS evaluation latency
+        const role = data.user.user_metadata?.role || 'patient';
         
         if (role === 'patient') {
           router.push("/dashboard/my-appointments");

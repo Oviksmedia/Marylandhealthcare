@@ -71,21 +71,25 @@ export default function AppointmentsPage() {
 
   async function loadData() {
     setIsLoading(true);
-    const { data: apts } = await supabase
-      .from('appointments')
-      .select('*, clinical_notes:notes')
-      .order('scheduled_at', { ascending: false });
-    
-    setAppointments(apts || []);
+    try {
+      const { data: apts } = await supabase
+        .from('appointments')
+        .select('*, clinical_notes:notes')
+        .order('scheduled_at', { ascending: false });
+      
+      setAppointments(apts || []);
 
-    // Fetch doctors list for names
-    const { data: drs } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('role', 'doctor');
-    setDoctors(drs || []);
-    
-    setIsLoading(false);
+      // Fetch doctors list for names
+      const { data: drs } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('role', 'doctor');
+      setDoctors(drs || []);
+    } catch (e) {
+      console.error("Failed to load appointments data:", e);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -488,22 +492,26 @@ export default function AppointmentsPage() {
 
             <div className={styles.panelActions}>
               <div className={styles.statusActions}>
-                <button 
-                  className={styles.btnComplete} 
-                  onClick={() => handleUpdateStatus('completed')}
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? <Loader2 className={styles.spinner} size={18} /> : <CheckCircle2 size={18} />}
-                  Mark Patient Completed
-                </button>
-                <button 
-                  className={styles.btnCancel} 
-                  onClick={() => handleUpdateStatus('cancelled')}
-                  disabled={isUpdating}
-                >
-                  <XCircle size={18} />
-                  Cancel Consultation
-                </button>
+                {selectedAptDetails?.status === 'confirmed' && (
+                  <button 
+                    className={styles.btnComplete} 
+                    onClick={() => handleUpdateStatus('completed')}
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? <Loader2 className={styles.spinner} size={18} /> : <CheckCircle2 size={18} />}
+                    Mark Patient Completed
+                  </button>
+                )}
+                {(selectedAptDetails?.status === 'pending' || selectedAptDetails?.status === 'confirmed') && (
+                  <button 
+                    className={styles.btnCancel} 
+                    onClick={() => handleUpdateStatus('cancelled')}
+                    disabled={isUpdating}
+                  >
+                    <XCircle size={18} />
+                    Cancel Consultation
+                  </button>
+                )}
               </div>
             </div>
           </div>

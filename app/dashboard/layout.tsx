@@ -41,118 +41,120 @@ export default function DashboardLayout({
   useEffect(() => {
     async function getUser() {
       setIsFetchingProfile(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      setAuthUser(user);
-      
-      if (!user) {
-        // Mock admin bypass for local development only
-        if (process.env.NEXT_PUBLIC_ENABLE_MOCK_AUTH === 'true' && process.env.NODE_ENV !== 'production') {
-          setUserProfile({
-            id: "mock-admin-id",
-            full_name: "Test Administrator",
-            role: "admin",
-            email: "tester@marylandhealthcare.com.ng",
-            phone: "08000000000"
-          });
-          setIsFetchingProfile(false);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setAuthUser(user);
+        
+        if (!user) {
+          // Mock admin bypass for local development only
+          if (process.env.NEXT_PUBLIC_ENABLE_MOCK_AUTH === 'true' && process.env.NODE_ENV !== 'production') {
+            setUserProfile({
+              id: "mock-admin-id",
+              full_name: "Test Administrator",
+              role: "admin",
+              email: "tester@marylandhealthcare.com.ng",
+              phone: "08000000000"
+            });
+            return;
+          }
+          // Production: redirect to login
+          router.push("/login");
           return;
         }
-        // Production: redirect to login
-        router.push("/login");
-        setIsFetchingProfile(false);
-        return;
-      }
 
-      // 1. Try to find profile by ID
-      const { data: profileById } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      let profile = profileById;
-
-      // 2. If not found by ID, try to find by Email (Auto-Link)
-      if (!profile && user.email) {
-        const { data: legacyProfile } = await supabase
+        // 1. Try to find profile by ID
+        const { data: profileById } = await supabase
           .from('profiles')
           .select('*')
-          .eq('email', user.email.toLowerCase().trim())
-          .maybeSingle();
-        
-        if (legacyProfile) {
-          if (legacyProfile.id !== user.id) {
-            // Remap securely using the server action to preserve appointments patient_id references
-            const remapResult = await remapLegacyProfile(user.email, user.id);
-            if (remapResult.success) {
-              const { data: newProfile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-              profile = newProfile;
-            } else {
-              console.error("Secure profile re-mapping failed:", remapResult.error);
-              // Fallback to local profile to prevent blocking the UI
-              profile = legacyProfile;
-            }
-          } else {
-            // Already correctly mapped
-            profile = legacyProfile;
-          }
-        }
-      }
+          .eq('id', user.id)
+          .single();
 
-      // 3. If STILL not found, create a new profile from auth user metadata
-      if (!profile && user.email) {
-        const fullName = user.user_metadata?.full_name || 'New Patient';
-        const role = user.user_metadata?.role || 'patient';
-        const phone = user.user_metadata?.phone || '';
+        let profile = profileById;
 
-        const result = await createProfileForUser({
-          id: user.id,
-          fullName: fullName,
-          email: user.email,
-          role: role,
-          phone: phone
-        });
-
-        if (result.success) {
-          profile = result.profile;
-        } else if (result.code === '23505') {
-          // Row was created concurrently/by trigger. Refetch it.
-          const { data: refetchedProfile } = await supabase
+        // 2. If not found by ID, try to find by Email (Auto-Link)
+        if (!profile && user.email) {
+          const { data: legacyProfile } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', user.id)
-            .single();
-          profile = refetchedProfile;
-        } else {
-          console.error("Auto-profile creation failed:", result.error);
+            .eq('email', user.email.toLowerCase().trim())
+            .maybeSingle();
+          
+          if (legacyProfile) {
+            if (legacyProfile.id !== user.id) {
+              // Remap securely using the server action to preserve appointments patient_id references
+              const remapResult = await remapLegacyProfile(user.email, user.id);
+              if (remapResult.success) {
+                const { data: newProfile } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('id', user.id)
+                  .single();
+                profile = newProfile;
+              } else {
+                console.error("Secure profile re-mapping failed:", remapResult.error);
+                // Fallback to local profile to prevent blocking the UI
+                profile = legacyProfile;
+              }
+            } else {
+              // Already correctly mapped
+              profile = legacyProfile;
+            }
+          }
         }
-      }
 
-      // Check if the doctor is suspended
-      if (profile?.role === 'doctor' && profile?.is_active === false) {
+        // 3. If STILL not found, create a new profile from auth user metadata
+        if (!profile && user.email) {
+          const fullName = user.user_metadata?.full_name || 'New Patient';
+          const role = user.user_metadata?.role || 'patient';
+          const phone = user.user_metadata?.phone || '';
+
+          const result = await createProfileForUser({
+            id: user.id,
+            fullName: fullName,
+            email: user.email,
+            role: role,
+            phone: phone
+          });
+
+          if (result.success) {
+            profile = result.profile;
+          } else if (result.code === '23505') {
+            // Row was created concurrently/by trigger. Refetch it.
+            const { data: refetchedProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', user.id)
+              .single();
+            profile = refetchedProfile;
+          } else {
+            console.error("Auto-profile creation failed:", result.error);
+          }
+        }
+
+        // Check if the doctor is suspended
+        if (profile?.role === 'doctor' && profile?.is_active === false) {
+          setUserProfile(null);
+          setAuthUser(null);
+          await supabase.auth.signOut();
+          router.push('/login?error=suspended');
+          return;
+        }
+
+        setUserProfile(profile);
+
+        // Fetch notifications (recent appointments) for admin/receptionist/doctor
+        if (profile?.role !== 'patient') {
+          const { data: recentApts } = await supabase
+            .from('appointments')
+            .select('id, patient_name, patient_email, type, status, payment_status, scheduled_at, created_at')
+            .order('created_at', { ascending: false })
+            .limit(15);
+          setNotifications(recentApts || []);
+        }
+      } catch (e) {
+        console.error("Failed to load user profile:", e);
+      } finally {
         setIsFetchingProfile(false);
-        setUserProfile(null);
-        setAuthUser(null);
-        await supabase.auth.signOut();
-        router.push('/login?error=suspended');
-        return;
-      }
-
-      setUserProfile(profile);
-      setIsFetchingProfile(false);
-
-      // Fetch notifications (recent appointments) for admin/receptionist/doctor
-      if (profile?.role !== 'patient') {
-        const { data: recentApts } = await supabase
-          .from('appointments')
-          .select('id, patient_name, patient_email, type, status, payment_status, scheduled_at, created_at')
-          .order('created_at', { ascending: false })
-          .limit(15);
-        setNotifications(recentApts || []);
       }
     }
     getUser();

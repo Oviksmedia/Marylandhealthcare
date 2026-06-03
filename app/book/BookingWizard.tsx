@@ -302,36 +302,36 @@ export default function BookingWizard() {
       if (user && user.email) {
         const email = user.email.toLowerCase().trim();
 
-        // Check appointments first to autofill details
-        const { data: appointments } = await supabase
-          .from("appointments")
-          .select("patient_name, patient_phone")
-          .eq("patient_email", email)
-          .order("scheduled_at", { ascending: false })
+        // Check profiles first to autofill details (Source of Truth)
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, phone")
+          .eq("email", email)
           .limit(1);
 
         let firstName = "";
         let lastName = "";
         let phone = "";
 
-        if (appointments && appointments.length > 0) {
-          const parts = (appointments[0].patient_name || "").split(" ");
+        if (profile && profile.length > 0) {
+          const parts = (profile[0].full_name || "").split(" ");
           firstName = parts[0] || "";
           lastName = parts.slice(1).join(" ") || "";
-          phone = appointments[0].patient_phone || "";
+          phone = profile[0].phone || "";
         } else {
-          // Fallback to profiles
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("full_name, phone")
-            .eq("email", email)
+          // Fallback to appointments
+          const { data: appointments } = await supabase
+            .from("appointments")
+            .select("patient_name, patient_phone")
+            .eq("patient_email", email)
+            .order("scheduled_at", { ascending: false })
             .limit(1);
 
-          if (profile && profile.length > 0) {
-            const parts = (profile[0].full_name || "").split(" ");
+          if (appointments && appointments.length > 0) {
+            const parts = (appointments[0].patient_name || "").split(" ");
             firstName = parts[0] || "";
             lastName = parts.slice(1).join(" ") || "";
-            phone = profile[0].phone || "";
+            phone = appointments[0].patient_phone || "";
           }
         }
 
@@ -542,35 +542,36 @@ export default function BookingWizard() {
 
       if (error) throw error;
 
-      // Authenticated! Pull past name and phone to autofill
-      const { data: appointments } = await supabase
-        .from("appointments")
-        .select("patient_name, patient_phone")
-        .eq("patient_email", state.patientDetails.email.toLowerCase().trim())
-        .order("scheduled_at", { ascending: false })
-        .limit(1);
-
+      // Authenticated! Pull past name and phone to autofill (profiles first, appointments fallback)
+      const email = state.patientDetails.email.toLowerCase().trim();
       let firstName = "";
       let lastName = "";
       let phone = "";
 
-      if (appointments && appointments.length > 0) {
-        const parts = (appointments[0].patient_name || "").split(" ");
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, phone")
+        .eq("email", email)
+        .limit(1);
+
+      if (profile && profile.length > 0) {
+        const parts = (profile[0].full_name || "").split(" ");
         firstName = parts[0] || "";
         lastName = parts.slice(1).join(" ") || "";
-        phone = appointments[0].patient_phone || "";
+        phone = profile[0].phone || "";
       } else {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("full_name, phone")
-          .eq("email", state.patientDetails.email.toLowerCase().trim())
+        const { data: appointments } = await supabase
+          .from("appointments")
+          .select("patient_name, patient_phone")
+          .eq("patient_email", email)
+          .order("scheduled_at", { ascending: false })
           .limit(1);
 
-        if (profile && profile.length > 0) {
-          const parts = (profile[0].full_name || "").split(" ");
+        if (appointments && appointments.length > 0) {
+          const parts = (appointments[0].patient_name || "").split(" ");
           firstName = parts[0] || "";
           lastName = parts.slice(1).join(" ") || "";
-          phone = profile[0].phone || "";
+          phone = appointments[0].patient_phone || "";
         }
       }
 

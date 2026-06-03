@@ -66,63 +66,67 @@ export default function DashboardOverview() {
   }, [selectedAptDetails]);
 
   async function loadDashboardData() {
-    let activeUser = null;
-    const { data: { user } } = await supabase.auth.getUser();
-    activeUser = user;
+    try {
+      let activeUser = null;
+      const { data: { user } } = await supabase.auth.getUser();
+      activeUser = user;
 
-    let profile = null;
-    if (activeUser) {
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', activeUser.id)
-        .single();
-      profile = p;
+      let profile = null;
+      if (activeUser) {
+        const { data: p } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', activeUser.id)
+          .single();
+        profile = p;
 
-      if (!profile) {
+        if (!profile) {
+          profile = {
+            id: activeUser.id,
+            full_name: activeUser.user_metadata?.full_name || 'Patient',
+            role: activeUser.user_metadata?.role || 'patient',
+            email: activeUser.email || '',
+            phone: activeUser.user_metadata?.phone || ''
+          };
+        }
+      } else if (process.env.NEXT_PUBLIC_ENABLE_MOCK_AUTH === 'true' && process.env.NODE_ENV !== 'production') {
+        // Mock admin bypass for local development only
         profile = {
-          id: activeUser.id,
-          full_name: activeUser.user_metadata?.full_name || 'Patient',
-          role: activeUser.user_metadata?.role || 'patient',
-          email: activeUser.email || '',
-          phone: activeUser.user_metadata?.phone || ''
+          id: "mock-admin-id",
+          full_name: "Test Administrator",
+          role: "admin",
+          email: "tester@marylandhealthcare.com.ng",
+          phone: "08000000000"
         };
       }
-    } else if (process.env.NEXT_PUBLIC_ENABLE_MOCK_AUTH === 'true' && process.env.NODE_ENV !== 'production') {
-      // Mock admin bypass for local development only
-      profile = {
-        id: "mock-admin-id",
-        full_name: "Test Administrator",
-        role: "admin",
-        email: "tester@marylandhealthcare.com.ng",
-        phone: "08000000000"
-      };
+
+      setUserProfile(profile);
+
+      // Redirect patients to their appointments page
+      if (profile?.role === 'patient') {
+        router.push('/dashboard/my-appointments');
+        return;
+      }
+
+      let query = supabase.from('appointments').select('*, clinical_notes:notes').order('scheduled_at', { ascending: false });
+      
+      if (profile?.role === 'doctor') {
+        query = query.eq('doctor_id', profile.id);
+      }
+
+      const { data: apts } = await query;
+      setAppointments(apts || []);
+
+      // Fetch doctors for assignment (Admin/Receptionist only)
+      if (profile?.role === 'admin' || profile?.role === 'receptionist') {
+        const { data: drs } = await supabase.from('profiles').select('*').eq('role', 'doctor');
+        setDoctors(drs || []);
+      }
+    } catch (e) {
+      console.error("Failed to load dashboard data:", e);
+    } finally {
+      setIsLoading(false);
     }
-
-    setUserProfile(profile);
-
-    // Redirect patients to their appointments page
-    if (profile?.role === 'patient') {
-      router.push('/dashboard/my-appointments');
-      return;
-    }
-
-    let query = supabase.from('appointments').select('*, clinical_notes:notes').order('scheduled_at', { ascending: false });
-    
-    if (profile?.role === 'doctor') {
-      query = query.eq('doctor_id', profile.id);
-    }
-
-    const { data: apts } = await query;
-    setAppointments(apts || []);
-
-    // Fetch doctors for assignment (Admin/Receptionist only)
-    if (profile?.role === 'admin' || profile?.role === 'receptionist') {
-      const { data: drs } = await supabase.from('profiles').select('*').eq('role', 'doctor');
-      setDoctors(drs || []);
-    }
-
-    setIsLoading(false);
   }
 
   // Calculate Stats
@@ -503,22 +507,26 @@ export default function DashboardOverview() {
 
             <div className={styles.panelActions}>
               <div className={styles.statusActions}>
-                <button 
-                  className={styles.btnComplete} 
-                  onClick={() => handleUpdateStatus('completed')}
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? <Loader2 className={styles.spinner} size={18} /> : <CheckCircle2 size={18} />}
-                  Mark as Completed
-                </button>
-                <button 
-                  className={styles.btnCancel} 
-                  onClick={() => handleUpdateStatus('cancelled')}
-                  disabled={isUpdating}
-                >
-                  <X size={18} />
-                  Cancel Appointment
-                </button>
+                {selectedAptDetails?.status === 'confirmed' && (
+                  <button 
+                    className={styles.btnComplete} 
+                    onClick={() => handleUpdateStatus('completed')}
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? <Loader2 className={styles.spinner} size={18} /> : <CheckCircle2 size={18} />}
+                    Mark as Completed
+                  </button>
+                )}
+                {(selectedAptDetails?.status === 'pending' || selectedAptDetails?.status === 'confirmed') && (
+                  <button 
+                    className={styles.btnCancel} 
+                    onClick={() => handleUpdateStatus('cancelled')}
+                    disabled={isUpdating}
+                  >
+                    <X size={18} />
+                    Cancel Appointment
+                  </button>
+                )}
               </div>
               <button className={styles.btnOutlineFull} onClick={() => {
                 setIsDetailsOpen(false);
