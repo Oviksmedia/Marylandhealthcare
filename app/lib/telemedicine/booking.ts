@@ -928,14 +928,17 @@ export async function registerPatientUser(userData: {
 
     const emailNormalized = userData.email.toLowerCase().trim();
 
-    // Fail hard if the user already has a profile registered
+    // Fail hard if the user already has a profile registered (active or soft-deleted)
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
-      .select('id')
+      .select('id, deleted_at')
       .eq('email', emailNormalized)
       .maybeSingle();
 
     if (existingProfile) {
+      if (existingProfile.deleted_at) {
+        return { success: false, error: 'This email address was previously registered and archived. Please contact support to reactivate your account.' };
+      }
       return { success: false, error: 'This email address is already registered. Please click "Returning Patient" and log in to proceed.' };
     }
 

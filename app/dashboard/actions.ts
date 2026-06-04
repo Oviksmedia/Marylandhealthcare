@@ -403,9 +403,22 @@ export async function deletePatient(email: string) {
 
       if (profileError) {
         console.error('Error soft-deleting profile:', profileError)
+        return { success: false, error: 'Failed to archive patient profile. The patient was NOT deleted. Please try again.' }
       }
 
-      // 4. Delete the user from Supabase Auth so they can no longer log in
+      // Verify profile was actually pseudonymized
+      const { data: verifiedProfile, error: verifyError } = await supabaseAdmin
+        .from('profiles')
+        .select('deleted_at, email')
+        .eq('id', profile.id)
+        .single()
+
+      if (verifyError || !verifiedProfile?.deleted_at || verifiedProfile.email === normalizedEmail) {
+        console.error('Profile pseudonymization verification failed:', verifyError || 'deleted_at is NULL or email unchanged')
+        return { success: false, error: 'Patient profile archive could not be verified. The patient was NOT deleted. Please try again.' }
+      }
+
+      // 4. Only delete the auth user AFTER profile pseudonymization is confirmed
       const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(profile.id)
       if (authError) {
         console.error('Error deleting auth user:', authError)
